@@ -18,17 +18,17 @@ pipeline {
             steps {
                 sshagent (credentials: ['jenkins-ssh-key']) {
                     sh """
-                    ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} << 'EOF'
-                        cd ${APP_DIR}
-                        git pull
-                        source venv/bin/activate
-                        pip install -r requirements.txt
-                        deactivate
-                        sudo systemctl restart woundai
+                    ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} '
+                        cd ${APP_DIR} &&
+                        git pull &&
+                        source venv/bin/activate &&
+                        pip install -r requirements.txt &&
+                        deactivate &&
+                        sudo systemctl restart woundai &&
                         sudo systemctl status woundai --no-pager
-                    EOF
+                    '
                     """
-                }
+                    }
             }
         }
     }
