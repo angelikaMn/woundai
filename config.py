@@ -2,7 +2,7 @@ import os
 
 # ---- Paths ----
 # Your trained model path (weights only to avoid Keras 3 serialization issues)
-MODEL_PATH = os.getenv("MODEL_PATH", "model/model_efficientnetB1augmented.weights.h5")
+MODEL_PATH = os.getenv("MODEL_PATH", "model/model_efficientnetB1.weights.h5")
 
 # Folders for uploads & outputs
 UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "static/uploads")
