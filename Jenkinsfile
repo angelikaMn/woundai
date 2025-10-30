@@ -4,14 +4,17 @@ pipeline {
     environment {
         DEPLOY_HOST = '34.50.119.22'
         APP_DIR = '/home/woundai/app'
+        VENV_DIR = '/home/woundai/venv'
+        REPO_URL = 'https://github.com/angelikaMn/woundai.git'
     }
 
     stages {
+
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
                     credentialsId: 'github-credentials',
-                    url: 'https://github.com/angelikaMn/woundai.git'
+                    url: "${REPO_URL}"
             }
         }
 
@@ -20,22 +23,49 @@ pipeline {
                 sshagent(credentials: ['woundai']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no woundai@${DEPLOY_HOST} "
-                            if [ ! -d ${APP_DIR}/.git ]; then
-                                echo '📦 First-time setup: cloning repo...'
-                                rm -rf ${APP_DIR}
-                                git clone https://github.com/angelikaMn/woundai.git ${APP_DIR}
-                            fi &&
-                            cd ${APP_DIR} &&
-                            git pull &&
-                            if [ ! -d venv ]; then
-                                python3 -m venv venv
-                            fi &&
-                            source venv/bin/activate &&
-                            pip install --upgrade-strategy only-if-needed --cache-dir ~/.cache/pip -r requirements.txt &&
-                            deactivate &&
+                            # -----------------------------
+                            # 1. Prepare app directory
+                            # -----------------------------
+                            if [ ! -d ${APP_DIR} ]; then
+                                echo '📦 Cloning repo for the first time...'
+                                git clone ${REPO_URL} ${APP_DIR}
+                            else
+                                echo '🔁 Updating existing repository...'
+                                cd ${APP_DIR} &&
+                                git fetch origin main &&
+                                git reset --hard origin/main
+                            fi
+
+                            # -----------------------------
+                            # 2. Python virtual environment
+                            # -----------------------------
+                            if [ ! -d ${VENV_DIR} ]; then
+                                echo '⚙️  Creating shared Python virtual environment...'
+                                python3 -m venv ${VENV_DIR}
+                            fi
+
+                            # -----------------------------
+                            # 3. Install dependencies (quiet + cached)
+                            # -----------------------------
+                            source ${VENV_DIR}/bin/activate &&
+                            pip install -r ${APP_DIR}/requirements.txt --cache-dir ~/.cache/pip --quiet --no-deps &&
+                            deactivate
+
+                            # -----------------------------
+                            # 4. Restart Flask service
+                            # -----------------------------
+                            echo '🔄 Restarting woundai service...'
                             sudo systemctl daemon-reload &&
-                            sudo systemctl restart woundai &&
-                            sudo systemctl is-active --quiet woundai && echo '✅ Deployment successful' || (echo '❌ Deployment failed' && exit 1)
+                            sudo systemctl restart woundai
+
+                            # -----------------------------
+                            # 5. Verify status
+                            # -----------------------------
+                            if sudo systemctl is-active --quiet woundai; then
+                                echo '✅ Deployment successful!'
+                            else
+                                echo '❌ Deployment failed!' && exit 1
+                            fi
                         "
                     '''
                 }
@@ -44,11 +74,11 @@ pipeline {
     }
 
     post {
-        failure {
-            echo "❌ Deployment failed. Check Jenkins logs for details."
-        }
         success {
-            echo "✅ Deployment successful and running."
+            echo '✅ Deployment successful and service is live.'
+        }
+        failure {
+            echo '❌ Deployment failed. Check Jenkins console for error logs.'
         }
     }
 }
