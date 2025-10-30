@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DEPLOY_USER = 'woundai'
-        DEPLOY_HOST = '<YOUR_STATIC_IP>'   // replace with your actual GCP VM static IP
+        DEPLOY_HOST = '34.50.119.22'
         APP_DIR = '/home/woundai/app'
     }
 
