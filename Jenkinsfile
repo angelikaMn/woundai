@@ -1,44 +1,49 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        DEPLOY_USER = 'woundai'
-        DEPLOY_HOST = '34.50.119.22'
-        APP_DIR = '/home/woundai/app'
+  environment {
+    DEPLOY_HOST = "34.50.119.22"
+    DEPLOY_USER = "woundai"
+    APP_DIR = "/home/woundai/app"
+    SSH_KEY_ID = "woundai"
+  }
+
+  stages {
+
+    stage('Checkout Code') {
+      steps {
+        git branch: 'main',
+            url: 'https://github.com/angelikaMn/woundai.git',
+            credentialsId: 'github-credentials'
+      }
     }
 
-    stages {
-        stage('Checkout Code') {
-            steps {
-                git branch: 'main', url: 'https://github.com/angelikaMn/woundai.git'
-            }
+    stage('Deploy to Server') {
+      steps {
+        sshagent(credentials: [env.SSH_KEY_ID]) {
+          sh '''
+            ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} '
+              cd ${APP_DIR} &&
+              git pull &&
+              source venv/bin/activate &&
+              pip install --upgrade-strategy only-if-needed --cache-dir ~/.cache/pip -r requirements.txt &&
+              deactivate &&
+              sudo systemctl daemon-reload &&
+              sudo systemctl restart woundai &&
+              sudo systemctl is-active --quiet woundai && echo "✅ Deployment successful" || (echo "❌ Deployment failed" && exit 1)
+            '
+          '''
         }
-
-        stage('Deploy to Server') {
-            steps {
-                sshagent (credentials: ['jenkins-ssh-key']) {
-                    sh """
-                    ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} '
-                        cd ${APP_DIR} &&
-                        git pull &&
-                        source venv/bin/activate &&
-                        pip install -r requirements.txt &&
-                        deactivate &&
-                        sudo systemctl restart woundai &&
-                        sudo systemctl status woundai --no-pager
-                    '
-                    """
-                    }
-            }
-        }
+      }
     }
+  }
 
-    post {
-        success {
-            echo '✅ Deployment succeeded! Your app is live on woundflask.site'
-        }
-        failure {
-            echo '❌ Deployment failed. Check Jenkins logs for details.'
-        }
+  post {
+    success {
+      echo "✅ Build and Deployment Successful."
     }
+    failure {
+      echo "❌ Deployment failed. Check Jenkins logs for details."
+    }
+  }
 }
