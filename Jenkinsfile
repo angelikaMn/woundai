@@ -37,8 +37,8 @@ pipeline {
             sudo systemctl is-active --quiet woundai && echo '✅ Deployment successful' || (echo '❌ Deployment failed' && exit 1)
         "
         '''
-    }
-}
+        }
+      }          
     }
   }
 
