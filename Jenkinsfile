@@ -1,53 +1,54 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    DEPLOY_HOST = "34.50.119.22"
-    DEPLOY_USER = "woundai"
-    APP_DIR = "/home/woundai/app"
-    SSH_KEY_ID = "woundai"
-  }
-
-  stages {
-
-    stage('Checkout Code') {
-      steps {
-        git branch: 'main',
-            url: 'https://github.com/angelikaMn/woundai.git',
-            credentialsId: 'github-credentials'
-      }
+    environment {
+        DEPLOY_HOST = '34.50.119.22'
+        APP_DIR = '/home/woundai/app'
     }
 
-    stage('Deploy to Server') {
-    sshagent(credentials: ['woundai']) {
-        sh '''
-        ssh -o StrictHostKeyChecking=no woundai@34.50.119.22 "
-            if [ ! -d /home/woundai/app/.git ]; then
-                echo '📦 First-time setup: cloning repo...'
-                rm -rf /home/woundai/app
-                git clone https://github.com/angelikaMn/woundai.git /home/woundai/app
-            fi &&
-            cd /home/woundai/app &&
-            git pull &&
-            source venv/bin/activate &&
-            pip install --upgrade-strategy only-if-needed -r requirements.txt &&
-            deactivate &&
-            sudo systemctl daemon-reload &&
-            sudo systemctl restart woundai &&
-            sudo systemctl is-active --quiet woundai && echo '✅ Deployment successful' || (echo '❌ Deployment failed' && exit 1)
-        "
-        '''
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'github-credentials',
+                    url: 'https://github.com/angelikaMn/woundai.git'
+            }
         }
-      }          
-    }
-  }
 
-  post {
-    success {
-      echo "✅ Build and Deployment Successful."
+        stage('Deploy to Server') {
+            steps {
+                sshagent(credentials: ['woundai']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no woundai@${DEPLOY_HOST} "
+                            if [ ! -d ${APP_DIR}/.git ]; then
+                                echo '📦 First-time setup: cloning repo...'
+                                rm -rf ${APP_DIR}
+                                git clone https://github.com/angelikaMn/woundai.git ${APP_DIR}
+                            fi &&
+                            cd ${APP_DIR} &&
+                            git pull &&
+                            if [ ! -d venv ]; then
+                                python3 -m venv venv
+                            fi &&
+                            source venv/bin/activate &&
+                            pip install --upgrade-strategy only-if-needed --cache-dir ~/.cache/pip -r requirements.txt &&
+                            deactivate &&
+                            sudo systemctl daemon-reload &&
+                            sudo systemctl restart woundai &&
+                            sudo systemctl is-active --quiet woundai && echo '✅ Deployment successful' || (echo '❌ Deployment failed' && exit 1)
+                        "
+                    '''
+                }
+            }
+        }
     }
-    failure {
-      echo "❌ Deployment failed. Check Jenkins logs for details."
+
+    post {
+        failure {
+            echo "❌ Deployment failed. Check Jenkins logs for details."
+        }
+        success {
+            echo "✅ Deployment successful and running."
+        }
     }
-  }
 }
