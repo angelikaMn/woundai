@@ -86,9 +86,12 @@ def get_model():
     """
     Load the model. If MODEL_PATH ends with .weights.h5, rebuild architecture and load weights.
     Otherwise try to load the full model.
+    
+    ⚡ OPTIMIZED: Model is cached in memory after first load for fast predictions!
     """
     global _model_cache, _input_size_cache
     if _model_cache is not None:
+        print("✓ Using cached model (fast path)")
         return _model_cache
 
     try:
@@ -138,6 +141,22 @@ def load_class_names() -> List[str]:
     return list(config.CLASS_NAMES)
 
 
+def is_probability_array(arr: np.ndarray, atol_sum: float = 1e-3) -> bool:
+    """Heuristic: check if rows sum to ~1 and all entries in [0,1].
+    This helps detect if model outputs are already probabilities or logits.
+    """
+    if arr.ndim != 2:
+        return False
+    row_sums = arr.sum(axis=1)
+    if not np.all(np.isfinite(arr)):
+        return False
+    if np.any(arr < -1e-6) or np.any(arr > 1.0 + 1e-6):
+        return False
+    if not np.allclose(row_sums, 1.0, atol=atol_sum):
+        return False
+    return True
+
+
 # --------------- preprocessing & predict ---------------
 def load_image_for_model(img_path: str) -> Tuple[np.ndarray, np.ndarray]:
     """
@@ -162,21 +181,40 @@ def load_image_for_model(img_path: str) -> Tuple[np.ndarray, np.ndarray]:
 def predict_image(model, img_batch: np.ndarray):
     """
     Returns (pred_idx, confidence (0-1), probs np.ndarray)
+    
+    ⚡ FIXED: Now properly detects if model outputs are already probabilities
+    or logits, and only applies softmax when needed. This gives REAL confidence scores!
     """
     preds = model.predict(img_batch)
+    
+    # Handle multiclass output (most common case)
     if preds.ndim == 2 and preds.shape[1] > 1:
-        probs = tf.nn.softmax(preds, axis=1).numpy().squeeze()
+        # Check if outputs are already probabilities or logits
+        probs_candidate = np.asarray(preds)
+        if is_probability_array(probs_candidate):
+            # Already probabilities - use directly!
+            probs = probs_candidate.squeeze()
+        else:
+            # Logits - apply softmax
+            probs = tf.nn.softmax(preds, axis=1).numpy().squeeze()
+        
         idx = int(np.argmax(probs))
         conf = float(probs[idx])
         return idx, conf, probs
+    
+    # Handle binary output (single sigmoid)
     elif preds.ndim == 2 and preds.shape[1] == 1:
         p1 = float(tf.sigmoid(preds).numpy().squeeze())
         idx = int(p1 >= 0.5)
         probs = np.array([1.0 - p1, p1])
         return idx, float(probs[idx]), probs
+    
+    # Fallback: flatten and softmax
     else:
-        probs = tf.nn.softmax(preds.reshape(1, -1), axis=1).numpy().squeeze()
-        idx = int(np.argmax(probs)); conf = float(probs[idx])
+        flat = preds.reshape(1, -1)
+        probs = tf.nn.softmax(flat, axis=1).numpy().squeeze()
+        idx = int(np.argmax(probs))
+        conf = float(probs[idx])
         return idx, conf, probs
 
 
@@ -341,6 +379,11 @@ def handle_upload_and_process(file_storage) -> dict:
     classes = load_class_names()
     pred_label = classes[pred_idx] if pred_idx < len(classes) else f"Class_{pred_idx}"
     confidence_pct = round(conf * 100.0, 2)
+    
+    # Log prediction with top-5 classes for verification
+    topk_indices = np.argsort(probs)[::-1][:5]
+    topk_str = ', '.join([f"{classes[i]}:{probs[i]*100:.2f}%" for i in topk_indices])
+    print(f"[PREDICT] {filename} -> {pred_label} ({confidence_pct}%) | Top-5: {topk_str}")
 
     # Grad-CAM
     heatmap = make_gradcam_heatmap(model, xbatch, class_idx=pred_idx)
