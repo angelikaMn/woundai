@@ -302,8 +302,14 @@
 
     /* --- 2. Result Box (Bottom-Left) --- */
     #result-box {
-      height: 345px;
-      max-height: 345px;
+      /* Use viewport-relative units so the box scales responsively.
+         32vh is approximately 345px on a 1080px-tall screen. We also
+         provide a max and a min so the box stays usable on very large
+         or very small screens. Tweak the vh value if you want a
+         different target height. */
+      height: 45vh;
+      max-height: 50vh;
+      min-height: 220px;
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -401,7 +407,7 @@
     /* --- 3. Gemini Box (Right) --- */
     #gemini-box {
       height: 100%;
-      max-height: 613px;
+      max-height: 650px;
       display: flex;
       flex-direction: column;
       overflow: hidden; /* Prevent overflow from card */
@@ -437,8 +443,11 @@
     .gemini-content {
       width: calc(100% - 32px); /* Account for margin */
       flex: 1 1 auto; /* Allow to grow and shrink */
-      min-height: 400px;
-      max-height: 650px; /* Fixed max height to prevent page scroll */
+      /* Default (mobile / small screens): keep a comfortable min height
+         and allow the block to grow naturally. Desktop-specific sizing
+         is applied in the media query below so the layout matches the
+         result box on desktop viewports. */
+      min-height: 220px;
       background: #333333;
       color: #eeeeee;
       border: 1px solid #555555;
@@ -451,6 +460,22 @@
       overflow-x: hidden; /* Hide horizontal overflow */
       white-space: pre-wrap;
       word-wrap: break-word; /* Break long words */
+    }
+
+    /* Desktop: make gemini-content follow the result-box height and
+       never extend past the viewport minus 20px bottom padding. This
+       ensures a fixed/responsive layout on desktop while preserving
+       natural behavior on mobile. */
+    @media (min-width: 901px) {
+      .gemini-content {
+        /* Match the result-box target height */
+        height: 45vh;
+        /* Prevent the box from extending beyond the viewport minus
+           a fixed 20px bottom gap */
+        max-height: calc(100vh - 20px);
+        /* Keep a usable minimum on narrow desktop windows */
+        min-height: 300px;
+      }
     }
     
     /* Custom scrollbar for Gemini content */
