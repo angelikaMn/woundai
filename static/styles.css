@@ -1,10 +1,21 @@
  /* --- Basic Setup --- */
+    /* Make the whole app fit a single viewport and prevent page scrolling. */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
     body {
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background-color: #1c1c1c;
       color: #eeeeee;
-      margin: 0;
-      padding: 24px;
+      /* small internal padding to keep content from touching edges */
+      padding: 16px;
+      box-sizing: border-box;
+      height: 100vh; /* lock to viewport */
+      overflow: hidden; /* disable outer page scrolling */
+      display: flex;
+      flex-direction: column;
     }
 
     /* --- Header --- */
@@ -12,9 +23,10 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
       padding: 0 10px;
-      font-family: Georgia, 'Times New Roman', Times, serif
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  flex: 0 0 auto; /* keep header size fixed */
     }
     .header-text h2 {
       font-size: 2.5rem;
@@ -39,6 +51,9 @@
       display: grid;
       grid-template-columns: 1.2fr 1fr;
       gap: 20px;
+      flex: 1 1 auto; /* occupy remaining vertical space */
+      min-height: 0; /* allow children to shrink in flex container */
+      overflow: hidden; /* prevent body scroll while allowing internal scrolls */
     }
     .left-column, .right-column {
       display: flex;
@@ -78,7 +93,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 280px;
+      /* Use viewport-relative sizing so the preview fits in a single screen */
+      min-height: 20vh;
+      max-height: 45vh;
       color: #888888;
       font-weight: 600;
       font-size: 1.2rem;
@@ -272,6 +289,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden; /* Prevent overflow from card */
+      min-height: 0; /* allow internal scrolling area to work inside flex */
     }
     #gemini-box h3 {
       margin: 0 0 15px;
@@ -281,7 +299,8 @@
     #gemini-box textarea {
       width: 100%;
       flex-grow: 1; /* Makes textarea fill the card */
-      min-height: 400px;
+      min-height: 6vh;
+      max-height: 100%;
       background: #333333;
       color: #eeeeee;
       border: 1px solid #555555;
@@ -293,6 +312,8 @@
       resize: vertical;
       transition: border-color 0.3s ease;
       white-space: pre-wrap;
+      overflow: auto;
+      min-height: 0;
     }
     #gemini-box textarea:focus {
       outline: none;
@@ -304,8 +325,8 @@
     .gemini-content {
       width: calc(100% - 32px); /* Account for margin */
       flex: 1 1 auto; /* Allow to grow and shrink */
-      min-height: 400px;
-      max-height: calc(100vh - 200px); /* Prevent exceeding viewport */
+      min-height: 0;
+      max-height: 100%; /* fill available card height */
       background: #333333;
       color: #eeeeee;
       border: 1px solid #555555;
@@ -314,10 +335,11 @@
       margin-right: 16px; /* Add margin on all sides */
       font-size: 0.95rem;
       line-height: 1.8;
-      overflow-y: auto; /* Enable scrolling */
+      overflow-y: auto; /* Enable internal scrolling without affecting page */
       overflow-x: hidden; /* Hide horizontal overflow */
       white-space: pre-wrap;
       word-wrap: break-word; /* Break long words */
+      box-sizing: border-box;
     }
     
     /* Custom scrollbar for Gemini content */
@@ -416,10 +438,13 @@
       border-radius: 8px;
     }
     .footer {
-      margin-top: 28px;
+      /* Keep footer visible and fitting within the viewport */
+      margin-top: 12px;
       font-size: 12px;
       color: #777777;
       text-align: center;
+      flex: 0 0 auto; /* prevent footer from growing */
+      padding: 8px 4px;
     }
     
     /* Loading Overlay */
