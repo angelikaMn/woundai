@@ -11,11 +11,28 @@
 </head>
 <body>
 
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-logo">
+      <a href="/">
+        <img src="/static/wound.png" alt="WoundAI Logo" onerror="this.style.display='none'">
+      </a>
+    </div>
+    <div class="navbar-links">
+      <a href="/" class="nav-link active">Home</a>
+      <a href="/about" class="nav-link">About</a>
+      <a href="/contact" class="nav-link">Contact</a>
+    </div>
+  </nav>
+
   <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-text">Analyzing image</div>
   </div>
+
+  <!-- Zoom Backdrop -->
+  <div class="zoom-backdrop" id="zoomBackdrop"></div>
 
   <!-- Camera Modal -->
   <div class="camera-modal" id="cameraModal">
@@ -28,18 +45,6 @@
         <button class="camera-btn secondary" id="closeCameraBtn">Close</button>
       </div>
     </div>
-  </div>
-
-  <div class="header">
-    <div class="header-text">
-      <h2>woundai app test ci/cd </h2>
-      <p class="subtitle">
-        Aplikasi flask untuk mendeteksi dan mengklasifikasi jenis luka dan penanganan berbasis LLM.
-        <br>
-        Berdasarkan 10 kelas: Abrasions, Bruises, Burns, Cut, Diabetic Wounds, Laseration, Normal, Pressure Wounds, Surgical Wounds, Venous Wounds.
-      </p>
-    </div>
-    <img src="/static/wound.png" alt="WoundAI Logo" class="logo" onerror="this.style.display='none'">
   </div>
 
   <div class="main-grid">
@@ -58,6 +63,7 @@
 
           <div class="btn-group">
             <button class="btn" type="submit" id="analyzeBtn">Analyze</button>
+            <a href="/" class="btn btn-new">New</a>
           </div>
           
           <div class="file-info-row">
@@ -395,6 +401,55 @@
       clearFile.style.display = 'inline';
     });
     {% endif %}
+
+    // 10. Image zoom functionality for gradcam and overlay images
+    const zoomBackdrop = document.getElementById('zoomBackdrop');
+
+    // Add click listeners to all viz-box elements
+    document.addEventListener('click', function(e) {
+      const vizBox = e.target.closest('.viz-box');
+
+      if (vizBox) {
+        // Check if clicking on a viz-box with an image
+        const img = vizBox.querySelector('img');
+        if (img && img.src) {
+          // Toggle zoom
+          if (vizBox.classList.contains('zoomed')) {
+            // Zoom out
+            vizBox.classList.remove('zoomed');
+            zoomBackdrop.classList.remove('active');
+            document.body.style.overflow = '';
+          } else {
+            // Close any other zoomed images first
+            document.querySelectorAll('.viz-box.zoomed').forEach(box => {
+              box.classList.remove('zoomed');
+            });
+            // Zoom in
+            vizBox.classList.add('zoomed');
+            zoomBackdrop.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          }
+        }
+      } else if (e.target === zoomBackdrop) {
+        // Click on backdrop closes zoom
+        document.querySelectorAll('.viz-box.zoomed').forEach(box => {
+          box.classList.remove('zoomed');
+        });
+        zoomBackdrop.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // ESC key to close zoom
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.viz-box.zoomed').forEach(box => {
+          box.classList.remove('zoomed');
+        });
+        zoomBackdrop.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
   </script>
 </body>
 </html>
