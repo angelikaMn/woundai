@@ -29,6 +29,7 @@
   <div class="loading-overlay" id="loadingOverlay">
     <div class="spinner"></div>
     <div class="loading-text">Analyzing image</div>
+    <div class="progress-text" id="progressText"></div>
   </div>
 
   <!-- Zoom Backdrop -->
@@ -144,7 +145,6 @@
 
     </div>
   </div>
-  <script src="/static/layout.js"></script>
   <script>
     // --- JavaScript for UI interactivity ---
     
@@ -316,6 +316,8 @@
     const analyzeBtn = document.getElementById('analyzeBtn');
 
     uploadForm.addEventListener('submit', async function(e) {
+      e.preventDefault(); // Prevent default form submission
+
       // Show inline spinner next to file name
       inlineSpinner.classList.add('active');
       analyzeBtn.disabled = true;
@@ -332,15 +334,132 @@
 
       // If triage failed (NOT_WOUND), cancel submit and show message
       if (uploadForm.dataset.triage === 'false') {
-        e.preventDefault();
         loadingOverlay.classList.remove('active');
         inlineSpinner.classList.remove('active');
         analyzeBtn.disabled = false;
         alert('Gemini triage: ' + (uploadForm.dataset.triage_msg || 'Image is not a wound'));
         return;
       }
-      // else allow the submit to continue
+
+      // Start progress polling
+      const progressText = document.getElementById('progressText');
+      let progressInterval = setInterval(async () => {
+        try {
+          const resp = await fetch('/progress');
+          const data = await resp.json();
+          if (data.progress) {
+            progressText.textContent = data.progress;
+          }
+        } catch (err) {
+          console.error('Progress polling error:', err);
+        }
+      }, 200); // Poll every 200ms
+
+      // Submit via AJAX
+      try {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        const response = await fetch('/analyze', {
+          method: 'POST',
+          body: formData
+        });
+
+        // IMPORTANT: Stop polling immediately when response received
+        if (progressInterval) {
+          clearInterval(progressInterval);
+          progressInterval = null;
+        }
+        progressText.textContent = '';
+
+        if (!response.ok) {
+          throw new Error('Analysis failed');
+        }
+
+        const result = await response.json();
+
+        // Hide loading overlay
+        loadingOverlay.classList.remove('active');
+        inlineSpinner.classList.remove('active');
+        analyzeBtn.disabled = false;
+
+        // Display results on the page
+        displayResults(result);
+
+      } catch (error) {
+        // Make sure to stop polling on error too
+        if (progressInterval) {
+          clearInterval(progressInterval);
+          progressInterval = null;
+        }
+        progressText.textContent = '';
+        loadingOverlay.classList.remove('active');
+        inlineSpinner.classList.remove('active');
+        analyzeBtn.disabled = false;
+        alert('Error during analysis: ' + error.message);
+      }
     });
+
+    // Function to display results dynamically
+    function displayResults(result) {
+      const resultBox = document.getElementById('result-box');
+      const geminiBox = document.getElementById('gemini-box');
+
+      if (result.status === 'error') {
+        resultBox.innerHTML = `
+          <div class="err">Model Load Error</div>
+          <pre>${result.message}</pre>
+          <p class="muted">Re-export your Keras model with input=(224,224,3).</p>
+        `;
+      } else if (result.status === 'not_wound') {
+        resultBox.innerHTML = `
+          <div class="err">Bukan Gambar Luka</div>
+          <p class="muted">Gemini triage indicates the uploaded image is not a wound/ulcer.</p>
+          ${result.input_image ? `
+            <div class="viz-container">
+              <div class="viz-box">
+                <img src="/${result.input_image}" alt="uploaded">
+              </div>
+            </div>
+          ` : ''}
+        `;
+      } else if (result.status === 'ok') {
+        // Update result box
+        resultBox.innerHTML = `
+          <div class="ok">Prediction completed</div>
+          <p>
+            <span class="label">Predicted Class:</span>
+            <span class="pill">${result.pred_label}</span>
+          </p>
+          <p>
+            <span class="label">Confidence Score:</span> ${result.confidence_pct}%
+          </p>
+          <div class="confidence-bar">
+            <div class="confidence-fill" style="width: ${result.confidence_pct}%;"></div>
+          </div>
+
+          <div class="viz-container">
+            <div class="viz-box" id="gradcam-box">
+              <img src="/${result.heatmap_image}" alt="heatmap">
+            </div>
+            <div class="viz-box" id="overlay-box">
+              <img src="/${result.overlay_image}" alt="overlay">
+            </div>
+          </div>
+        `;
+
+        // Update Gemini box - properly handle the content container
+        const geminiContent = geminiBox.querySelector('.gemini-content');
+        if (geminiContent) {
+          // Remove any inline styles that might be affecting layout
+          geminiContent.removeAttribute('style');
+          geminiContent.innerHTML = result.gemini_html;
+        }
+      }
+
+      // Scroll to results
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 
     async function runTriage(file) {
       // Run fast LLM triage via AJAX; set uploadForm.dataset.triage = 'true'|'false'

@@ -316,32 +316,42 @@ def gemini_penanganan(pred_label: str, original_path: str, heatmap_path: str, ov
     if model is None:
         return ("Gemini tidak terkonfigurasi (GEMINI_API_KEY kosong). "
                 "Lewati analisis LLM pada mode ini.")
-
     prompt = f"""
-Analisis gambar luka yang disediakan beserta heatmap Grad-CAM dan overlay-nya.
+Analisis gambar luka dengan overlay Grad-CAM untuk prediksi '{pred_label}'.
 
-Berdasarkan hasil klasifikasi model ('{pred_label}'), karakteristik visual luka pada gambar asli, dan area yang disorot oleh heatmap Grad-CAM:
+1. **Tipe Luka:** Jelaskan tipe luka (gunakan '{pred_label}') dan ciri-ciri yang terlihat.
+2. **Penanganan:** Langkah terstruktur (bernomor) berdasarkan metode klinis dan jurnal.
+3. **Keparahan:** Untuk luka parah, rekomendasikan evaluasi medis profesional.
+4. **Interpretasi:** Area sorotan model dan kontribusinya pada klasifikasi '{pred_label}'.
+5. **Referensi:** Sumber berkreditasi (section terpisah di bawah).
 
-1. **Jelaskan Tipe Luka:** Berikan penjelasan jelas mengenai tipe luka berdasarkan prediksi model ('{pred_label}') dan analisis visual Anda. Jelaskan ciri-ciri utamanya yang terlihat pada gambar.
-2. **Sediakan Saran Penanganan:** Tawarkan saran penanganan yang terstruktur, detail, dan spesifik untuk mengelola tipe luka ini. **Saran-saran ini harus didasarkan pada metode yang terbukti secara klinis, merujuk pada pengetahuan dari jurnal medis.** Sajikan langkah-langkah penanganan dalam daftar bernomor atau berpoin yang jelas.
-3. **Pertimbangkan Keparahan:** Nyatakan secara eksplisit bahwa untuk luka yang parah (misalnya, dalam, besar, terinfeksi, tidak kunjung sembuh), evaluasi medis profesional dan penanganan oleh dokter atau spesialis perawatan luka sangat direkomendasikan dan mungkin diperlukan sebagai pengganti perawatan di rumah. Sesuaikan rekomendasi ini berdasarkan tingkat keparahan yang terlihat pada gambar.
-4. **Interpretasi Heatmap:** Jelaskan secara singkat area mana yang disorot oleh heatmap Grad-CAM dan bagaimana area tersebut kemungkinan berkontribusi pada klasifikasi model ('{pred_label}'). Jika heatmap tidak informatif (misalnya, berwarna solid), sebutkan keterbatasan ini.
-5. **Sertakan referensi dari jurnal atau sumber mana penanganan yang disediakan (Haruslah sumber berkreditasi), semua sumbernya dibuat section sendiri saja di bagian bawah**
-
-Fokuslah pada saran yang praktis dan dapat ditindaklanjuti sambil tetap patuh pada persyaratan berbasis klinis dan menekankan perawatan medis profesional untuk kasus-kasus serius. Pastikan nadanya informatif dan hati-hati.
+Fokus: saran praktis, klinis, informatif.
+penting: koreksi jika prediksi salah. lihat original path berikan maksud sebenarnya itu luka apa, dan berikan saran penanganan yang sesuai pendek saja.
 """.strip()
 
     try:
         resp = model.generate_content([
             prompt,
             genai.upload_file(original_path),
-            genai.upload_file(heatmap_path),
             genai.upload_file(overlay_path),
         ])
         return resp.text or "(Tidak ada teks dari Gemini.)"
     except Exception as e:
         return f"Analisis Gemini gagal: {e}"
 
+# --------------- Global progress tracking ---------------
+_current_progress = ""
+
+def set_progress(message: str):
+    """Set the current progress message"""
+    global _current_progress
+    _current_progress = message
+    print(message)
+
+def get_progress() -> str:
+    """Get the current progress message"""
+    global _current_progress
+    return _current_progress
 
 # --------------- main pipeline ---------------
 def handle_upload_and_process(file_storage) -> dict:
@@ -352,6 +362,10 @@ def handle_upload_and_process(file_storage) -> dict:
     - Grad-CAM + overlay
     - Gemini penanganan
     """
+    print("=" * 80)
+    print("🔍 STARTING PREDICTION PIPELINE")
+    print("=" * 80)
+
     ensure_dirs()
 
     filename = secure_filename(file_storage.filename)
@@ -361,37 +375,188 @@ def handle_upload_and_process(file_storage) -> dict:
     file_storage.save(saved_path)
     saved_path = saved_path.replace("\\", "/")
 
+    print(f"✓ Step 1/7: Image uploaded and saved")
+    print(f"  └─ File: {filename}")
+    print(f"  └─ Path: {saved_path}")
+    print()
+
     # LLM triage BEFORE loading the heavy model (fast-fail for non-wound images)
+    print("⏳ Step 2/7: Gemini validation (checking if image contains wound)...")
     is_wound, msg = gemini_check_is_wound(saved_path)
     if not is_wound:
+        print(f"✗ Gemini validation failed: {msg}")
+        print("=" * 80)
         # Return quickly; no model load required
         return {"status": "not_wound", "message": msg, "input_image": saved_path}
+    print(f"✓ Step 2/7: Gemini validation passed - {msg}")
+    print()
 
     # Load model (will raise if the saved file is malformed)
+    print("⏳ Step 3/7: Loading prediction model...")
     try:
         model = get_model()
+        print("✓ Step 3/7: Model loaded successfully")
+        print()
     except RuntimeError as e:
+        print(f"✗ Model loading failed: {e}")
+        print("=" * 80)
         return {"status": "error", "message": str(e)}
 
     # Preprocess & predict
+    print("⏳ Step 4/7: Predicting wound class...")
     xbatch, original_resized = load_image_for_model(saved_path)
     pred_idx, conf, probs = predict_image(model, xbatch)
     classes = load_class_names()
     pred_label = classes[pred_idx] if pred_idx < len(classes) else f"Class_{pred_idx}"
     confidence_pct = round(conf * 100.0, 2)
-    
+
     # Log prediction with top-5 classes for verification
     topk_indices = np.argsort(probs)[::-1][:5]
     topk_str = ', '.join([f"{classes[i]}:{probs[i]*100:.2f}%" for i in topk_indices])
-    print(f"[PREDICT] {filename} -> {pred_label} ({confidence_pct}%) | Top-5: {topk_str}")
+    print(f"✓ Step 4/7: Class predicted - {pred_label} ({confidence_pct}%)")
+    print(f"  └─ Top 5 predictions: {topk_str}")
+    print()
 
     # Grad-CAM
+    print("⏳ Step 5/7: Generating GradCAM heatmap...")
     heatmap = make_gradcam_heatmap(model, xbatch, class_idx=pred_idx)
+    print("✓ Step 5/7: GradCAM heatmap generated")
+    print()
+
+    print("⏳ Step 6/7: Generating overlay image...")
     heatmap_path, overlay_path = save_heatmap_and_overlay(saved_path, heatmap, alpha=0.35)
+    print("✓ Step 6/7: Overlay image generated")
+    print(f"  └─ Heatmap: {heatmap_path}")
+    print(f"  └─ Overlay: {overlay_path}")
+    print()
 
     # Gemini penanganan
+    print("⏳ Step 7/7: Generating Gemini LLM analysis and treatment recommendations...")
     gemini_text = gemini_penanganan(pred_label, saved_path, heatmap_path, overlay_path)
     gemini_html = format_gemini_markdown(gemini_text)
+    print("✓ Step 7/7: Gemini LLM analysis completed")
+    print(f"  └─ Analysis length: {len(gemini_text)} characters")
+    print()
+
+    print("=" * 80)
+    print("✅ PREDICTION PIPELINE COMPLETED SUCCESSFULLY")
+    print("=" * 80)
+    print()
+
+    return {
+        "status": "ok",
+        "input_image": saved_path,
+        "heatmap_image": heatmap_path,
+        "overlay_image": overlay_path,
+        "pred_label": pred_label,
+        "confidence_pct": confidence_pct,
+        "probs": probs.tolist(),
+        "classes": classes,
+        "gemini_text": gemini_text,
+        "gemini_html": gemini_html,
+    }
+
+
+def handle_upload_and_process_with_progress(file_storage, progress_callback=None) -> dict:
+    """
+    Same as handle_upload_and_process but with progress callbacks
+    - Save upload
+    - Gemini triage wound/not-wound
+    - Predict
+    - Grad-CAM + overlay
+    - Gemini penanganan
+    """
+    print("=" * 80)
+    print("🔍 STARTING PREDICTION PIPELINE")
+    print("=" * 80)
+
+    ensure_dirs()
+
+    filename = secure_filename(file_storage.filename)
+    ext = filename.rsplit(".", 1)[1].lower()
+    saved_name = _unique_name("input", ext)
+    saved_path = os.path.join(config.UPLOAD_FOLDER, saved_name)
+    file_storage.save(saved_path)
+    saved_path = saved_path.replace("\\", "/")
+
+    print(f"✓ Step 1/5: Image uploaded and saved")
+    print(f"  └─ File: {filename}")
+    print(f"  └─ Path: {saved_path}")
+    print()
+
+    # Skip Gemini validation here since it was already done during file upload
+    # Load model (will raise if the saved file is malformed)
+    print("⏳ Step 2/5: Loading prediction model...")
+    set_progress("Loading prediction model")
+    if progress_callback:
+        progress_callback("Loading prediction model")
+
+    try:
+        model = get_model()
+        print("✓ Step 2/5: Model loaded successfully")
+        print()
+    except RuntimeError as e:
+        print(f"✗ Model loading failed: {e}")
+        print("=" * 80)
+        return {"status": "error", "message": str(e)}
+
+    # Preprocess & predict
+    print("⏳ Step 3/5: Predicting wound class...")
+    set_progress("Predicting wound class")
+    if progress_callback:
+        progress_callback("Predicting wound class")
+
+    xbatch, original_resized = load_image_for_model(saved_path)
+    pred_idx, conf, probs = predict_image(model, xbatch)
+    classes = load_class_names()
+    pred_label = classes[pred_idx] if pred_idx < len(classes) else f"Class_{pred_idx}"
+    confidence_pct = round(conf * 100.0, 2)
+
+    # Log prediction with top-5 classes for verification
+    topk_indices = np.argsort(probs)[::-1][:5]
+    topk_str = ', '.join([f"{classes[i]}:{probs[i]*100:.2f}%" for i in topk_indices])
+    print(f"✓ Step 3/5: Class predicted - {pred_label} ({confidence_pct}%)")
+    print(f"  └─ Top 5 predictions: {topk_str}")
+    print()
+
+    # Grad-CAM
+    print("⏳ Step 4/5: Generating GradCAM heatmap and overlay...")
+    set_progress("Generating GradCAM heatmap")
+    if progress_callback:
+        progress_callback("Generating GradCAM heatmap")
+
+    heatmap = make_gradcam_heatmap(model, xbatch, class_idx=pred_idx)
+
+    set_progress("Generating overlay image")
+    if progress_callback:
+        progress_callback("Generating overlay image")
+
+    heatmap_path, overlay_path = save_heatmap_and_overlay(saved_path, heatmap, alpha=0.35)
+    print("✓ Step 4/5: GradCAM heatmap and overlay generated")
+    print(f"  └─ Heatmap: {heatmap_path}")
+    print(f"  └─ Overlay: {overlay_path}")
+    print()
+
+    # Gemini penanganan
+    print("⏳ Step 5/5: Generating Gemini LLM analysis and treatment recommendations...")
+    set_progress("Generating Gemini LLM analysis")
+    if progress_callback:
+        progress_callback("Generating Gemini LLM analysis")
+
+    gemini_text = gemini_penanganan(pred_label, saved_path, heatmap_path, overlay_path)
+    gemini_html = format_gemini_markdown(gemini_text)
+    print("✓ Step 5/5: Gemini LLM analysis completed")
+    print(f"  └─ Analysis length: {len(gemini_text)} characters")
+    print()
+
+    print("=" * 80)
+    print("✅ PREDICTION PIPELINE COMPLETED SUCCESSFULLY")
+    print("=" * 80)
+    print()
+
+    set_progress("")  # Clear progress
+    if progress_callback:
+        progress_callback("completed")
 
     return {
         "status": "ok",

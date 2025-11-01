@@ -1,0 +1,80 @@
+this is a list of gemini prompt 
+this is for backup 
+
+
+this is a format code for gemini markdown 
+
+def format_gemini_markdown(text: str) -> str:
+    """Convert Gemini markdown-style text to HTML"""
+    import re
+    
+    # Replace bold (**text**)
+    text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
+    
+    # Replace italic (*text*)
+    text = re.sub(r'\*(.+?)\*', r'<em>\1</em>', text)
+    
+    # Replace headers
+    text = re.sub(r'^### (.+)$', r'<h3>\1</h3>', text, flags=re.MULTILINE)
+    text = re.sub(r'^## (.+)$', r'<h2>\1</h2>', text, flags=re.MULTILINE)
+    text = re.sub(r'^# (.+)$', r'<h1>\1</h1>', text, flags=re.MULTILINE)
+    
+    # Replace numbered lists (keep line breaks for CSS to handle)
+    text = re.sub(r'^\d+\.\s+(.+)$', r'<li>\1</li>', text, flags=re.MULTILINE)
+    
+    # Wrap consecutive <li> in <ol>
+    text = re.sub(r'(<li>.*?</li>\s*)+', lambda m: f'<ol>{m.group(0)}</ol>', text, flags=re.DOTALL)
+    
+    # Replace double newlines with paragraph breaks
+    text = re.sub(r'\n\n+', '</p><p>', text)
+    
+    # Wrap in paragraph if not already wrapped
+    if not text.startswith('<'):
+        text = f'<p>{text}</p>'
+    
+    return text
+
+
+this is the list of professional prompt 
+
+prompt = f"""
+Analisis gambar luka yang disediakan beserta heatmap Grad-CAM dan overlay-nya.
+
+Berdasarkan hasil klasifikasi model ('{pred_label}'), karakteristik visual luka pada gambar asli, dan area yang disorot oleh heatmap Grad-CAM:
+
+1. **Jelaskan Tipe Luka:** Berikan penjelasan jelas mengenai tipe luka berdasarkan prediksi model ('{pred_label}') dan analisis visual Anda. Jelaskan ciri-ciri utamanya yang terlihat pada gambar.
+2. **Sediakan Saran Penanganan:** Tawarkan saran penanganan yang terstruktur, detail, dan spesifik untuk mengelola tipe luka ini. **Saran-saran ini harus didasarkan pada metode yang terbukti secara klinis, merujuk pada pengetahuan dari jurnal medis.** Sajikan langkah-langkah penanganan dalam daftar bernomor atau berpoin yang jelas.
+3. **Pertimbangkan Keparahan:** Nyatakan secara eksplisit bahwa untuk luka yang parah (misalnya, dalam, besar, terinfeksi, tidak kunjung sembuh), evaluasi medis profesional dan penanganan oleh dokter atau spesialis perawatan luka sangat direkomendasikan dan mungkin diperlukan sebagai pengganti perawatan di rumah. Sesuaikan rekomendasi ini berdasarkan tingkat keparahan yang terlihat pada gambar.
+4. **Interpretasi Heatmap:** Jelaskan secara singkat area mana yang disorot oleh heatmap Grad-CAM dan bagaimana area tersebut kemungkinan berkontribusi pada klasifikasi model ('{pred_label}'). Jika heatmap tidak informatif (misalnya, berwarna solid), sebutkan keterbatasan ini.
+5. **Sertakan referensi dari jurnal atau sumber mana penanganan yang disediakan (Haruslah sumber berkreditasi), semua sumbernya dibuat section sendiri saja di bagian bawah**
+
+Fokuslah pada saran yang praktis dan dapat ditindaklanjuti sambil tetap patuh pada persyaratan berbasis klinis dan menekankan perawatan medis profesional untuk kasus-kasus serius. Pastikan nadanya informatif dan hati-hati.
+""".strip()
+
+-----------------------------------------------------
+
+prompt = f"""
+Analisis gambar luka, heatmap Grad-CAM, dan overlay berdasarkan prediksi '{pred_label}'.
+
+1. **Tipe Luka:** Jelaskan tipe luka '{pred_label}' dan ciri-ciri utamanya yang terlihat.
+2. **Saran Penanganan:** Berikan langkah penanganan terstruktur (daftar bernomor/berpoin) berdasarkan metode klinis dan jurnal medis.
+3. **Keparahan:** Untuk luka parah (dalam, besar, terinfeksi, tidak sembuh), rekomendasikan evaluasi medis profesional. Sesuaikan dengan keparahan yang terlihat.
+4. **Interpretasi Heatmap:** Jelaskan area yang disorot Grad-CAM dan kontribusinya pada klasifikasi '{pred_label}'. Sebutkan jika tidak informatif.
+5. **Referensi:** Sertakan sumber berkreditasi dalam section terpisah di bawah.
+
+Berikan saran praktis, klinis, dan informatif dengan penekanan pada perawatan medis profesional untuk kasus serius.
+""".strip()
+
+try:
+        # ⚡ OPTIMIZED: Send only overlay image instead of 3 images
+        # This reduces upload time and API processing by ~60%
+        # Overlay contains all visual information (original + heatmap)
+        resp = model.generate_content([
+            prompt,
+            genai.upload_file(original_path),
+            genai.upload_file(heatmap_path),
+            genai.upload_file(overlay_path),
+        ])
+        return resp.text or "(Tidak ada teks dari Gemini.)"
+    except Exception as e:
+        return f"Analisis Gemini gagal: {e}"

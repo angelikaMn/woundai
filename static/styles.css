@@ -7,15 +7,7 @@
       padding: 0;
     }
 
-    /* Layout variables: adjust these if your header/navbar sizes differ.
-       --bottom-gap: desired gap from bottom of viewport (20px requested).
-       --panel-top-offset: estimated vertical space above the panels
-         (header, upload controls, margins). Tweak for exact placement. */
-    :root {
-      --bottom-gap: 20px;
-      --panel-top-offset: 200px; /* tweak this if panels appear too tall/short */
-      --desktop-panel-target: 45vh; /* visual target height on desktop */
-    }
+    
 
     /* --- Navigation Bar --- */
     .navbar {
@@ -128,6 +120,29 @@
       display: flex;
       flex-direction: column;
       gap: 20px;
+    }
+
+    .content-container {
+      height: calc(100vh - 180px); /* Adjusted for navbar and header */
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    /* Custom scrollbar for content container */
+    .content-container::-webkit-scrollbar {
+      width: 10px;
+    }
+    .content-container::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 4px;
+    }
+    .content-container::-webkit-scrollbar-thumb {
+      background: #1c1c1c;
+      border-radius: 4px;
+      border: 2px solid #2a2a2a;
+    }
+    .content-container::-webkit-scrollbar-thumb:hover {
+      background: #3a3a3a;
     }
 
     /* --- Card Styling --- */
@@ -312,14 +327,9 @@
 
     /* --- 2. Result Box (Bottom-Left) --- */
     #result-box {
-      /* Keep a visual target but ensure the panel never extends
-         past the viewport bottom minus the bottom gap. The calc()
-         uses an estimated top offset so both panels stay ~20px above
-         the bottom when the viewport height changes. Tweak
-         --panel-top-offset in :root for exact alignment. */
-      height: min(var(--desktop-panel-target), calc(100vh - var(--panel-top-offset) - var(--bottom-gap)));
-      max-height: calc(100vh - var(--panel-top-offset) - var(--bottom-gap));
-      min-height: 220px;
+      height: 100%;
+      max-height: 345px;     
+      min-height: 345px; /* Ensure a minimum height */
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -417,7 +427,7 @@
     /* --- 3. Gemini Box (Right) --- */
     #gemini-box {
       height: 100%;
-      max-height: 650px;
+      max-height: 100%;
       display: flex;
       flex-direction: column;
       overflow: hidden; /* Prevent overflow from card */
@@ -451,40 +461,22 @@
 
     /* Gemini content formatting */
     .gemini-content {
-      width: calc(100% - 32px); /* Account for margin */
+      width: 100%; /* Full width of parent */
       flex: 1 1 auto; /* Allow to grow and shrink */
-      /* Default (mobile / small screens): keep a comfortable min height
-         and allow the block to grow naturally. Desktop-specific sizing
-         is applied in the media query below so the layout matches the
-         result box on desktop viewports. */
-      min-height: 220px;
+      min-height: 400px;
+      max-height: 550px; /* Fixed max height to prevent page scroll */
       background: #333333;
       color: #eeeeee;
       border: 1px solid #555555;
       border-radius: 8px;
       padding: 16px;
-      margin-right: 16px; /* Add margin on all sides */
       font-size: 0.95rem;
       line-height: 1.8;
       overflow-y: auto; /* Enable scrolling */
       overflow-x: hidden; /* Hide horizontal overflow */
-      white-space: pre-wrap;
-      word-wrap: break-word; /* Break long words */
-    }
-
-    /* Desktop: make gemini-content follow the result-box height and
-       never extend past the viewport minus 20px bottom padding. This
-       ensures a fixed/responsive layout on desktop while preserving
-       natural behavior on mobile. */
-    @media (min-width: 901px) {
-      .gemini-content {
-        /* Match the result-box target height but ensure a 20px gap
-           from the bottom of the viewport. Uses the same top-offset
-           estimate as #result-box. */
-        height: min(var(--desktop-panel-target), calc(100vh - var(--panel-top-offset) - var(--bottom-gap)));
-        max-height: calc(100vh - var(--panel-top-offset) - var(--bottom-gap));
-        min-height: 300px;
-      }
+      overflow-wrap: break-word; /* Break long words */
+      word-break: break-word; /* Break long words */
+      box-sizing: border-box; /* Include padding in width */
     }
     
     /* Custom scrollbar for Gemini content */
@@ -681,6 +673,24 @@
       40% { content: '..'; }
       60%, 100% { content: '...'; }
     }
+
+    /* Progress Text */
+    .progress-text {
+      color: #fff;
+      margin-top: 15px;
+      font-size: 1rem;
+      font-weight: 500;
+      min-height: 24px;
+    }
+    .progress-text::after {
+      content: '';
+      animation: dots 1.5s steps(4, end) infinite;
+    }
+    @keyframes dots {
+      0%, 20% { content: '.'; }
+      40% { content: '..'; }
+      60%, 100% { content: '...'; }
+    }
     
     /* Button disabled state */
     .btn:disabled {
@@ -777,7 +787,45 @@
        devices (<=900px) will keep normal page scrolling. */
     @media (min-width: 901px) {
       html, body {
-        overflow: hidden; /* prevent page scroll on desktop */
         height: 100%;
+        overflow: hidden; /* Prevent page scroll completely */
       }
+    }
+
+    /* Scrollable container for about page - Landscape layout */
+    .scrollable-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 82px); /* Full height minus navbar */
+      padding: 40px 20px; /* Vertical padding for centering */
+      overflow: hidden; /* Prevent page scroll */
+      box-sizing: border-box;
+    }
+
+    .scrollable-container .card {
+      width: 85vw; /* Landscape width - spans most of the screen horizontally */
+      max-width: 1400px; /* Maximum width limit */
+      height: 75vh; /* Fixed landscape height - shorter than full viewport */
+      max-height: 650px; /* Maximum height limit to maintain landscape proportion */
+      overflow-y: auto; /* Scrollable content */
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+
+    /* Custom scrollbar for scrollable container card */
+    .scrollable-container .card::-webkit-scrollbar {
+      width: 10px;
+    }
+    .scrollable-container .card::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 4px;
+    }
+    .scrollable-container .card::-webkit-scrollbar-thumb {
+      background: #1c1c1c;
+      border-radius: 4px;
+      border: 2px solid #2a2a2a;
+    }
+    .scrollable-container .card::-webkit-scrollbar-thumb:hover {
+      background: #3a3a3a;
     }

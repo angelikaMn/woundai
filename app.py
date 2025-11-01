@@ -1,13 +1,15 @@
 import os
-from flask import Flask, render_template, request, redirect, flash, jsonify
+from flask import Flask, render_template, request, redirect, flash, jsonify, Response, stream_with_context
 import uuid
 import io
 from werkzeug.utils import secure_filename
 from utils import gemini_check_is_wound, ensure_dirs
+import json
+import time
 
 import tensorflow as tf
 import config
-from utils import allowed_file, handle_upload_and_process, get_model
+from utils import allowed_file, handle_upload_and_process_with_progress, get_model, get_progress
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 app.config["SECRET_KEY"] = config.SECRET_KEY
@@ -40,21 +42,6 @@ else:
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    if request.method == "POST":
-        if "image" not in request.files:
-            flash("No file part")
-            return redirect(request.url)
-        file = request.files["image"]
-        if not file or file.filename == "":
-            flash("No selected file")
-            return redirect(request.url)
-        if not allowed_file(file.filename):
-            flash("Unsupported file type. Please upload PNG/JPG/JPEG/WEBP.")
-            return redirect(request.url)
-
-        result = handle_upload_and_process(file)
-        return render_template("index.html", result=result)
-
     return render_template("index.html", result=None)
 
 
@@ -114,6 +101,50 @@ def triage():
     # missing/invalid keys and exceptions by returning (True, message).
     is_wound, msg = gemini_check_is_wound(save_path)
     return jsonify({'is_wound': bool(is_wound), 'message': msg, 'input_image': save_path})
+
+@app.route('/analyze', methods=['POST'])
+def analyze():
+    """Process uploaded image and return JSON result"""
+    if 'image' not in request.files:
+        return jsonify({'error': 'no file part'}), 400
+    file = request.files['image']
+    if not file or file.filename == '':
+        return jsonify({'error': 'no selected file'}), 400
+    if not allowed_file(file.filename):
+        return jsonify({'error': 'unsupported file type'}), 400
+
+    def progress_callback(step_message):
+        """Callback to track progress"""
+        # For now we don't stream progress to the client here, but this
+        # callback is preserved for future use. Keep it minimal.
+        pass
+
+    # Measure wall-clock time for the entire analyze pipeline (from click -> pipeline done)
+    start = time.perf_counter()
+    result = handle_upload_and_process_with_progress(file, progress_callback)
+    elapsed = time.perf_counter() - start
+
+    # Add timing info to the response so the frontend can display it
+    result['elapsed_seconds'] = float(f"{elapsed:.3f}")
+    result['elapsed_human'] = f"{elapsed:.2f}s"
+
+    # Print a clear terminal message when the entire pipeline completes
+    print("""
+------------------------------------------------------------
+✅ ANALYZE PIPELINE FINISHED
+  Input: %s
+  Status: %s
+  Elapsed time: %0.3fs
+------------------------------------------------------------
+""" % (result.get('input_image', '<unknown>'), result.get('status', '<no-status>'), elapsed))
+
+    # Return result directly as JSON instead of storing in session
+    return jsonify(result)
+
+@app.route('/progress', methods=['GET'])
+def progress():
+    """Get current progress status"""
+    return jsonify({'progress': get_progress()})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=False)
