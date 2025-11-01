@@ -4,10 +4,84 @@
       background-color: #1c1c1c;
       color: #eeeeee;
       margin: 0;
-      padding: 24px;
+      padding: 0;
     }
 
-    /* --- Header --- */
+    /* --- Navigation Bar --- */
+    .navbar {
+      background-color: #2a2a2a;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-logo a {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-logo img {
+      height: 50px;
+      width: auto;
+      transition: transform 0.3s ease;
+    }
+
+    .navbar-logo img:hover {
+      transform: scale(1.05);
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: #eeeeee;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      color: #ffffff;
+      background-color: #3a3a3a;
+      transform: translateY(-2px);
+    }
+
+    .nav-link.active {
+      color: #ffffff;
+      background-color: #a04040;
+    }
+
+    .nav-link.active:hover {
+      background-color: #b85050;
+    }
+
+    /* Add padding back to body content */
+    body > *:not(.navbar) {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    body > .main-grid {
+      padding-top: 24px;
+    }
+
+    body > .header {
+      padding-top: 24px;
+    }
+
+    /* --- Header (for About and Contact pages) --- */
     .header {
       display: flex;
       justify-content: space-between;
@@ -78,7 +152,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 280px;
+      min-height: 200px;
+      max-height: 200px;
+      height: 200px;
       color: #888888;
       font-weight: 600;
       font-size: 1.2rem;
@@ -86,8 +162,8 @@
     }
     .preview-box img {
       display: none; /* Hidden by default */
-      max-width: 100%;
-      max-height: 100%;
+      width: 100%;
+      height: 100%;
       border-radius: 8px;
       object-fit: contain;
       animation: fadeIn 0.3s ease;
@@ -226,12 +302,32 @@
 
     /* --- 2. Result Box (Bottom-Left) --- */
     #result-box {
-      min-height: 220px;
+      height: 345px;
+      max-height: 345px;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
     #result-box p {
       margin: 0 0 10px;
       font-size: 1.1rem;
       font-weight: 500;
+    }
+
+    /* Custom scrollbar for result box */
+    #result-box::-webkit-scrollbar {
+      width: 10px;
+    }
+    #result-box::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 4px;
+    }
+    #result-box::-webkit-scrollbar-thumb {
+      background: #1c1c1c;
+      border-radius: 4px;
+      border: 2px solid #2a2a2a;
+    }
+    #result-box::-webkit-scrollbar-thumb:hover {
+      background: #3a3a3a;
     }
     .viz-container {
       display: flex;
@@ -241,7 +337,7 @@
       flex: 1;
       background-color: #444444;
       border-radius: 8px;
-      min-height: 180px;
+      aspect-ratio: 1 / 1;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -249,26 +345,63 @@
       font-weight: 600;
       font-size: 1.2rem;
       overflow: hidden;
-      cursor: pointer;
+      cursor: zoom-in;
       transition: transform 0.2s ease;
+      position: relative;
     }
     .viz-box:hover {
       transform: scale(1.02);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
     }
     .viz-box img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       border-radius: 8px;
       transition: transform 0.3s ease;
     }
     .viz-box:hover img {
-      transform: scale(1.1);
+      transform: scale(1.05);
+    }
+
+    /* Zoom effect on click */
+    .viz-box.zoomed {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      width: 90vw;
+      height: 90vh;
+      max-width: 1200px;
+      max-height: 900px;
+      z-index: 9999;
+      cursor: zoom-out;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+    }
+    .viz-box.zoomed img {
+      transform: scale(1);
+      object-fit: contain;
+    }
+
+    /* Overlay backdrop when zoomed */
+    .zoom-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9998;
+    }
+    .zoom-backdrop.active {
+      display: block;
     }
     
     /* --- 3. Gemini Box (Right) --- */
     #gemini-box {
       height: 100%;
+      max-height: 600px;
       display: flex;
       flex-direction: column;
       overflow: hidden; /* Prevent overflow from card */
@@ -299,13 +432,13 @@
       border-color: #a04040;
       box-shadow: 0 0 0 2px rgba(160, 64, 64, 0.2);
     }
-    
+
     /* Gemini content formatting */
     .gemini-content {
       width: calc(100% - 32px); /* Account for margin */
       flex: 1 1 auto; /* Allow to grow and shrink */
       min-height: 400px;
-      max-height: calc(100vh - 200px); /* Prevent exceeding viewport */
+      max-height: 650px; /* Fixed max height to prevent page scroll */
       background: #333333;
       color: #eeeeee;
       border: 1px solid #555555;
@@ -325,16 +458,16 @@
       width: 10px;
     }
     .gemini-content::-webkit-scrollbar-track {
-      background: transparent; /* Empty/transparent background */
+      background: transparent;
       border-radius: 4px;
     }
     .gemini-content::-webkit-scrollbar-thumb {
-      background: #2a2a2a; /* Match card color */
+      background: #1c1c1c;
       border-radius: 4px;
-      border: 2px solid #333333; /* Creates padding effect */
+      border: 2px solid #333333;
     }
     .gemini-content::-webkit-scrollbar-thumb:hover {
-      background: #3a3a3a; /* Slightly lighter on hover */
+      background: #3a3a3a;
     }
     
     .gemini-content h1, .gemini-content h2, .gemini-content h3 {
@@ -420,6 +553,54 @@
       font-size: 12px;
       color: #777777;
       text-align: center;
+    }
+
+    /* --- Contact Form Styling --- */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      color: #ccc;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      background-color: #333333;
+      color: #eeeeee;
+      border: 1px solid #555555;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #a04040;
+      box-shadow: 0 0 0 2px rgba(160, 64, 64, 0.2);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: #777;
     }
     
     /* Loading Overlay */
@@ -540,5 +721,18 @@
       }
       #upload-box {
         flex-direction: column;
+      }
+      .navbar {
+        padding: 12px 16px;
+      }
+      .navbar-logo img {
+        height: 40px;
+      }
+      .navbar-links {
+        gap: 15px;
+      }
+      .nav-link {
+        font-size: 0.9rem;
+        padding: 6px 12px;
       }
     }

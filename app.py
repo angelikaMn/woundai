@@ -58,6 +58,35 @@ def index():
     return render_template("index.html", result=None)
 
 
+@app.route("/about", methods=["GET"])
+def about():
+    """About page route"""
+    return render_template("about.html")
+
+
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    """Contact page route"""
+    if request.method == "POST":
+        # Get form data
+        name = request.form.get("name")
+        email = request.form.get("email")
+        subject = request.form.get("subject")
+        message = request.form.get("message")
+
+        # Here you could add logic to send emails, store in database, etc.
+        # For now, we'll just acknowledge the submission
+        print(f"Contact form submitted:")
+        print(f"  Name: {name}")
+        print(f"  Email: {email}")
+        print(f"  Subject: {subject}")
+        print(f"  Message: {message}")
+
+        return render_template("contact.html", message_sent=True)
+
+    return render_template("contact.html", message_sent=False)
+
+
 @app.route('/triage', methods=['POST'])
 def triage():
     """Lightweight endpoint: accept an image, run the Gemini triage only, and
