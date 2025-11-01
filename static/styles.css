@@ -401,7 +401,7 @@
     /* --- 3. Gemini Box (Right) --- */
     #gemini-box {
       height: 100%;
-      max-height: 600px;
+      max-height: 613px;
       display: flex;
       flex-direction: column;
       overflow: hidden; /* Prevent overflow from card */
