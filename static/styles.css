@@ -758,6 +758,240 @@
       background: #666;
     }
 
+    /* --- Welcome Modal (Get Started) --- */
+    .welcome-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 10001;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .welcome-modal.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .welcome-modal-content {
+      background: #2a2a2a;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 700px;
+      height: 80vh;
+      max-height: 650px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.4s ease;
+      overflow: hidden;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(30px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: #444;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .modal-close-btn:hover {
+      background: #a04040;
+      transform: rotate(90deg);
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+      padding: 40px 30px 30px;
+      text-align: center;
+      flex-shrink: 0;
+      border-bottom: 2px solid #444;
+    }
+
+    .modal-logo {
+      width: 70px;
+      height: 70px;
+      margin-bottom: 15px;
+      animation: logoFloat 2s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .modal-header h2 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .modal-subtitle {
+      margin: 0;
+      color: #aaa;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .modal-body {
+      padding: 30px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1;
+    }
+
+    /* Custom scrollbar for modal body */
+    .modal-body::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .modal-body::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 4px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+      background: #1c1c1c;
+      border-radius: 4px;
+      border: 2px solid #2a2a2a;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb:hover {
+      background: #3a3a3a;
+    }
+
+    .modal-section {
+      margin-bottom: 30px;
+    }
+
+    .modal-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .modal-section h3 {
+      color: #60ffb0;
+      font-size: 1.3rem;
+      margin: 0 0 15px;
+      font-weight: 700;
+    }
+
+    .modal-section p {
+      color: #ddd;
+      line-height: 1.8;
+      margin: 10px 0;
+      font-size: 0.95rem;
+    }
+
+    .modal-section ol,
+    .modal-section ul {
+      color: #ddd;
+      line-height: 2;
+      margin: 10px 0;
+      padding-left: 25px;
+    }
+
+    .modal-section li {
+      margin: 10px 0;
+      font-size: 0.95rem;
+    }
+
+    .modal-section li strong {
+      color: #ffb060;
+      font-weight: 700;
+    }
+
+    .modal-footer-section {
+      background: #333;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #a04040;
+    }
+
+    .modal-footer-section p {
+      margin: 0;
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+
+    /* Responsive modal on smaller screens */
+    @media (max-width: 768px) {
+      .welcome-modal-content {
+        width: 95%;
+        height: 85vh;
+        max-height: none;
+      }
+
+      .modal-header {
+        padding: 30px 20px 20px;
+      }
+
+      .modal-logo {
+        width: 60px;
+        height: 60px;
+      }
+
+      .modal-header h2 {
+        font-size: 1.6rem;
+      }
+
+      .modal-body {
+        padding: 20px;
+      }
+
+      .modal-section h3 {
+        font-size: 1.1rem;
+      }
+
+      .modal-close-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1.1rem;
+      }
+    }
+
     /* Responsive adjustment */
     @media (max-width: 900px) {
       .main-grid {

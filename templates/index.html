@@ -48,6 +48,55 @@
     </div>
   </div>
 
+  <!-- Get Started Modal -->
+  <div class="welcome-modal" id="welcomeModal">
+    <div class="welcome-modal-content">
+      <button class="modal-close-btn" id="closeModalBtn">✕</button>
+      <div class="modal-header">
+        <img src="/static/wound.png" alt="WoundAI Logo" class="modal-logo">
+        <h2>Welcome to WoundAI</h2>
+        <p class="modal-subtitle">Your AI-Powered Wound Analysis Assistant</p>
+      </div>
+
+      <div class="modal-body">
+        <section class="modal-section">
+          <h3>📋 About This Project</h3>
+          <p>
+            WoundAI is an advanced medical AI application that automatically detects, classifies, and provides treatment
+            recommendations for different types of wounds. Powered by EfficientNetB1 deep learning model and Google's Gemini AI,
+            we deliver accurate wound classification with explainable AI visualizations.
+          </p>
+        </section>
+
+        <section class="modal-section">
+          <h3>🎯 How to Use</h3>
+          <ol>
+            <li><strong>Upload an Image:</strong> Click "Choose File" or use the "Camera" button to capture a wound photo</li>
+            <li><strong>Gemini Triage:</strong> The AI will automatically verify that your image contains an actual wound</li>
+            <li><strong>Analyze:</strong> Click the "Analyze" button to start the wound classification process</li>
+            <li><strong>Review Results:</strong> View the predicted wound type, confidence score, and Grad-CAM visualization</li>
+            <li><strong>Read Recommendations:</strong> Get detailed treatment suggestions from Gemini LLM in Indonesian</li>
+          </ol>
+        </section>
+
+        <section class="modal-section">
+          <h3>✨ Expected Results</h3>
+          <ul>
+            <li><strong>Wound Classification:</strong> Identification of 10 wound types (Abrasions, Bruises, Burns, Cuts, Diabetic Wounds, Lacerations, Normal, Pressure Wounds, Surgical Wounds, Venous Wounds)</li>
+            <li><strong>Confidence Score:</strong> Percentage indicating the model's certainty in its prediction</li>
+            <li><strong>Grad-CAM Heatmap:</strong> Visual explanation showing which parts of the image influenced the AI's decision</li>
+            <li><strong>Overlay Visualization:</strong> Heatmap overlaid on the original image for better context</li>
+            <li><strong>Treatment Recommendations:</strong> Clinically-backed suggestions for wound care in Indonesian language</li>
+          </ul>
+        </section>
+
+        <section class="modal-section modal-footer-section">
+          <p><strong>Note:</strong> This tool is designed to assist healthcare professionals and should not replace professional medical advice.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+
   <div class="main-grid">
 
     <div class="left-column">
@@ -554,9 +603,53 @@
       }
     });
 
-    // ESC key to close zoom
+    // --- Welcome Modal Functionality ---
+    const welcomeModal = document.getElementById('welcomeModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const WELCOME_MODAL_KEY = 'woundai_welcome_shown';
+
+    // Function to close modal and mark as shown
+    function closeWelcomeModal() {
+      welcomeModal.classList.remove('active');
+      document.body.style.overflow = ''; // Restore scrolling
+      // Mark that user has seen the welcome modal
+      localStorage.setItem(WELCOME_MODAL_KEY, 'true');
+    }
+
+    // Show modal when page loads (only for new users)
+    window.addEventListener('DOMContentLoaded', function() {
+      // Check if user has seen the modal before
+      const hasSeenWelcome = localStorage.getItem(WELCOME_MODAL_KEY);
+
+      if (!hasSeenWelcome) {
+        // New user - show the modal with a slight delay for better UX
+        setTimeout(function() {
+          welcomeModal.classList.add('active');
+          document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }, 300);
+      }
+    });
+
+    // Close modal when clicking the close button
+    closeModalBtn.addEventListener('click', function() {
+      closeWelcomeModal();
+    });
+
+    // Close modal when clicking outside the modal content
+    welcomeModal.addEventListener('click', function(e) {
+      if (e.target === welcomeModal) {
+        closeWelcomeModal();
+      }
+    });
+
+    // ESC key to close both zoom and modal
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
+        // Close welcome modal if active
+        if (welcomeModal.classList.contains('active')) {
+          closeWelcomeModal();
+        }
+        // Close zoomed images
         document.querySelectorAll('.viz-box.zoomed').forEach(box => {
           box.classList.remove('zoomed');
         });
