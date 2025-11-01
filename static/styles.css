@@ -736,3 +736,14 @@
         padding: 6px 12px;
       }
     }
+
+    /* Disable page-level scrolling on desktop/PC view while keeping internal
+       containers scrollable. This preserves the current visual layout but
+       prevents the entire page from scrolling on wide screens. Mobile/tablet
+       devices (<=900px) will keep normal page scrolling. */
+    @media (min-width: 901px) {
+      html, body {
+        overflow: hidden; /* prevent page scroll on desktop */
+        height: 100%;
+      }
+    }
