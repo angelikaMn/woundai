@@ -7,6 +7,16 @@
       padding: 0;
     }
 
+    /* Layout variables: adjust these if your header/navbar sizes differ.
+       --bottom-gap: desired gap from bottom of viewport (20px requested).
+       --panel-top-offset: estimated vertical space above the panels
+         (header, upload controls, margins). Tweak for exact placement. */
+    :root {
+      --bottom-gap: 20px;
+      --panel-top-offset: 200px; /* tweak this if panels appear too tall/short */
+      --desktop-panel-target: 45vh; /* visual target height on desktop */
+    }
+
     /* --- Navigation Bar --- */
     .navbar {
       background-color: #2a2a2a;
@@ -302,13 +312,13 @@
 
     /* --- 2. Result Box (Bottom-Left) --- */
     #result-box {
-      /* Use viewport-relative units so the box scales responsively.
-         32vh is approximately 345px on a 1080px-tall screen. We also
-         provide a max and a min so the box stays usable on very large
-         or very small screens. Tweak the vh value if you want a
-         different target height. */
-      height: 45vh;
-      max-height: 50vh;
+      /* Keep a visual target but ensure the panel never extends
+         past the viewport bottom minus the bottom gap. The calc()
+         uses an estimated top offset so both panels stay ~20px above
+         the bottom when the viewport height changes. Tweak
+         --panel-top-offset in :root for exact alignment. */
+      height: min(var(--desktop-panel-target), calc(100vh - var(--panel-top-offset) - var(--bottom-gap)));
+      max-height: calc(100vh - var(--panel-top-offset) - var(--bottom-gap));
       min-height: 220px;
       overflow-y: auto;
       overflow-x: hidden;
@@ -468,12 +478,11 @@
        natural behavior on mobile. */
     @media (min-width: 901px) {
       .gemini-content {
-        /* Match the result-box target height */
-        height: 45vh;
-        /* Prevent the box from extending beyond the viewport minus
-           a fixed 20px bottom gap */
-        max-height: calc(100vh - 20px);
-        /* Keep a usable minimum on narrow desktop windows */
+        /* Match the result-box target height but ensure a 20px gap
+           from the bottom of the viewport. Uses the same top-offset
+           estimate as #result-box. */
+        height: min(var(--desktop-panel-target), calc(100vh - var(--panel-top-offset) - var(--bottom-gap)));
+        max-height: calc(100vh - var(--panel-top-offset) - var(--bottom-gap));
         min-height: 300px;
       }
     }
