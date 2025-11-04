@@ -1,5 +1,14 @@
 import os
-from flask import Flask, render_template, request, redirect, flash, jsonify, Response, stream_with_context
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    flash,
+    jsonify,
+    Response,
+    stream_with_context,
+)
 import uuid
 import io
 from werkzeug.utils import secure_filename
@@ -9,7 +18,12 @@ import time
 
 import tensorflow as tf
 import config
-from utils import allowed_file, handle_upload_and_process_with_progress, get_model, get_progress
+from utils import (
+    allowed_file,
+    handle_upload_and_process_with_progress,
+    get_model,
+    get_progress,
+)
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 app.config["SECRET_KEY"] = config.SECRET_KEY
@@ -38,7 +52,10 @@ if getattr(config, "PRELOAD_MODEL", False):
         print(f"❌ Failed to preload model: {e}")
         print("=" * 60)
 else:
-    print("Model preload disabled (PRELOAD_MODEL=False). Will run Gemini triage before loading model.")
+    print(
+        "Model preload disabled (PRELOAD_MODEL=False). Will run Gemini triage before loading model."
+    )
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -74,44 +91,47 @@ def contact():
     return render_template("contact.html", message_sent=False)
 
 
-@app.route('/triage', methods=['POST'])
+@app.route("/triage", methods=["POST"])
 def triage():
     """Lightweight endpoint: accept an image, run the Gemini triage only, and
     return JSON {is_wound: bool, message: str, input_image: str}.
     This endpoint MUST NOT load the heavy model.
     """
-    if 'image' not in request.files:
-        return jsonify({'error': 'no file part'}), 400
-    file = request.files['image']
-    if not file or file.filename == '':
-        return jsonify({'error': 'no selected file'}), 400
+    if "image" not in request.files:
+        return jsonify({"error": "no file part"}), 400
+    file = request.files["image"]
+    if not file or file.filename == "":
+        return jsonify({"error": "no selected file"}), 400
     if not allowed_file(file.filename):
-        return jsonify({'error': 'unsupported file type'}), 400
+        return jsonify({"error": "unsupported file type"}), 400
 
     ensure_dirs()
     # sanitize name and write to upload folder
     filename = secure_filename(file.filename)
-    ext = filename.rsplit('.', 1)[1].lower()
+    ext = filename.rsplit(".", 1)[1].lower()
     unique_name = f"input_{uuid.uuid4().hex}.{ext}"
     save_path = os.path.join(config.UPLOAD_FOLDER, unique_name)
     file.save(save_path)
-    save_path = save_path.replace('\\', '/')
+    save_path = save_path.replace("\\", "/")
 
     # Run only the LLM triage (fast-fail). gemini_check_is_wound will handle
     # missing/invalid keys and exceptions by returning (True, message).
     is_wound, msg = gemini_check_is_wound(save_path)
-    return jsonify({'is_wound': bool(is_wound), 'message': msg, 'input_image': save_path})
+    return jsonify(
+        {"is_wound": bool(is_wound), "message": msg, "input_image": save_path}
+    )
 
-@app.route('/analyze', methods=['POST'])
+
+@app.route("/analyze", methods=["POST"])
 def analyze():
     """Process uploaded image and return JSON result"""
-    if 'image' not in request.files:
-        return jsonify({'error': 'no file part'}), 400
-    file = request.files['image']
-    if not file or file.filename == '':
-        return jsonify({'error': 'no selected file'}), 400
+    if "image" not in request.files:
+        return jsonify({"error": "no file part"}), 400
+    file = request.files["image"]
+    if not file or file.filename == "":
+        return jsonify({"error": "no selected file"}), 400
     if not allowed_file(file.filename):
-        return jsonify({'error': 'unsupported file type'}), 400
+        return jsonify({"error": "unsupported file type"}), 400
 
     def progress_callback(step_message):
         """Callback to track progress"""
@@ -125,26 +145,35 @@ def analyze():
     elapsed = time.perf_counter() - start
 
     # Add timing info to the response so the frontend can display it
-    result['elapsed_seconds'] = float(f"{elapsed:.3f}")
-    result['elapsed_human'] = f"{elapsed:.2f}s"
+    result["elapsed_seconds"] = float(f"{elapsed:.3f}")
+    result["elapsed_human"] = f"{elapsed:.2f}s"
 
     # Print a clear terminal message when the entire pipeline completes
-    print("""
+    print(
+        """
 ------------------------------------------------------------
 ✅ ANALYZE PIPELINE FINISHED
   Input: %s
   Status: %s
   Elapsed time: %0.3fs
 ------------------------------------------------------------
-""" % (result.get('input_image', '<unknown>'), result.get('status', '<no-status>'), elapsed))
+"""
+        % (
+            result.get("input_image", "<unknown>"),
+            result.get("status", "<no-status>"),
+            elapsed,
+        )
+    )
 
     # Return result directly as JSON instead of storing in session
     return jsonify(result)
 
-@app.route('/progress', methods=['GET'])
+
+@app.route("/progress", methods=["GET"])
 def progress():
     """Get current progress status"""
-    return jsonify({'progress': get_progress()})
+    return jsonify({"progress": get_progress()})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=False)

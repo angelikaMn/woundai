@@ -1,73 +1,166 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>About - WoundAi</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" href="{{ url_for('static', filename='wound.png') }}" type="image/x-icon">
-  <link rel="shortcut icon" href="{{ url_for('static', filename='wound.png') }}" type="image/x-icon">
-  <link rel="icon" href="{{ url_for('static', filename='wound.png') }}" type="image/png" sizes="32x32">
-  <link rel="stylesheet" href="/static/styles.css">
-</head>
-<body>
+    <head>
+        <meta charset="utf-8" />
+        <title>About - WoundAi</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#fef9f6" />
+        <link
+            rel="icon"
+            href="{{ url_for('static', filename='wound.png') }}"
+            type="image/x-icon"
+        />
+        <link
+            rel="shortcut icon"
+            href="{{ url_for('static', filename='wound.png') }}"
+            type="image/x-icon"
+        />
+        <link
+            rel="icon"
+            href="{{ url_for('static', filename='wound.png') }}"
+            type="image/png"
+            sizes="32x32"
+        />
+        <link rel="stylesheet" href="/static/styles.css" />
+        <script src="/static/theme-toggle.js"></script>
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="navbar-logo">
+                <a href="/">
+                    <img
+                        src="/static/wound.png"
+                        alt="WoundAI Logo"
+                        onerror="this.style.display='none'"
+                    />
+                </a>
+            </div>
+            <div class="navbar-links">
+                <!-- Theme Toggle Button -->
+                <button
+                    class="theme-toggle"
+                    aria-label="Toggle dark mode"
+                    title="Toggle theme"
+                    tabindex="0"
+                >
+                    <span class="theme-toggle-icon sun">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <path
+                                d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"
+                            />
+                        </svg>
+                    </span>
+                    <span class="theme-toggle-icon moon">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </span>
+                </button>
+                <a href="/" class="nav-link">Home</a>
+                <a href="/about" class="nav-link active">About</a>
+                <a href="/contact" class="nav-link">Contact</a>
+            </div>
+        </nav>
 
-  <!-- Navigation Bar -->
-  <nav class="navbar">
-    <div class="navbar-logo">
-      <a href="/">
-        <img src="/static/wound.png" alt="WoundAI Logo" onerror="this.style.display='none'">
-      </a>
-    </div>
-    <div class="navbar-links">
-      <a href="/" class="nav-link">Home</a>
-      <a href="/about" class="nav-link active">About</a>
-      <a href="/contact" class="nav-link">Contact</a>
-    </div>
-  </nav>
+        <div class="scrollable-container">
+            <div class="card">
+                <h3>What is WoundAI?</h3>
+                <p>
+                    WoundAI is an advanced medical AI application designed to
+                    automatically detect, classify, and provide treatment
+                    recommendations for different types of wounds. Using
+                    state-of-the-art deep learning technology and large language
+                    models, we aim to assist healthcare professionals and
+                    individuals in identifying and treating wounds more
+                    effectively.
+                </p>
 
-  <div class="scrollable-container">
-    <div class="card">
-      <h3>What is WoundAI?</h3>
-      <p>
-        WoundAI is an advanced medical AI application designed to automatically detect, classify, and provide treatment recommendations for different types of wounds.
-        Using state-of-the-art deep learning technology and large language models, we aim to assist healthcare professionals and individuals in identifying and treating wounds more effectively.
-      </p>
+                <h3>Our Technology</h3>
+                <p>
+                    <strong>Deep Learning Model:</strong> We use EfficientNetB1,
+                    a powerful convolutional neural network, to classify wounds
+                    into 10 different categories with high accuracy.
+                </p>
+                <p>
+                    <strong>AI Triage:</strong> Google's Gemini AI performs
+                    preliminary verification to ensure uploaded images contain
+                    actual wounds before processing.
+                </p>
+                <p>
+                    <strong>Explainable AI:</strong> Grad-CAM (Gradient-weighted
+                    Class Activation Mapping) visualization helps users
+                    understand which parts of the image influenced the AI's
+                    decision.
+                </p>
+                <p>
+                    <strong>Treatment Recommendations:</strong> Gemini LLM
+                    provides detailed, clinically-backed treatment suggestions
+                    in Indonesian language.
+                </p>
 
-      <h3>Our Technology</h3>
-      <p>
-        <strong>Deep Learning Model:</strong> We use EfficientNetB1, a powerful convolutional neural network, to classify wounds into 10 different categories with high accuracy.
-      </p>
-      <p>
-        <strong>AI Triage:</strong> Google's Gemini AI performs preliminary verification to ensure uploaded images contain actual wounds before processing.
-      </p>
-      <p>
-        <strong>Explainable AI:</strong> Grad-CAM (Gradient-weighted Class Activation Mapping) visualization helps users understand which parts of the image influenced the AI's decision.
-      </p>
-      <p>
-        <strong>Treatment Recommendations:</strong> Gemini LLM provides detailed, clinically-backed treatment suggestions in Indonesian language.
-      </p>
+                <h3>Wound Classifications</h3>
+                <p>
+                    Our system can identify and classify the following types of
+                    wounds:
+                </p>
+                <ul style="line-height: 2">
+                    <li>
+                        <strong>Abrasions</strong> - Surface scrapes and
+                        scratches
+                    </li>
+                    <li><strong>Bruises</strong> - Contusions and hematomas</li>
+                    <li>
+                        <strong>Burns</strong> - Thermal, chemical, or
+                        electrical burns
+                    </li>
+                    <li>
+                        <strong>Cuts</strong> - Clean incisions and lacerations
+                    </li>
+                    <li>
+                        <strong>Diabetic Wounds</strong> - Ulcers related to
+                        diabetes
+                    </li>
+                    <li>
+                        <strong>Lacerations</strong> - Irregular tears in the
+                        skin
+                    </li>
+                    <li><strong>Normal</strong> - Non-wound skin conditions</li>
+                    <li>
+                        <strong>Pressure Wounds</strong> - Bedsores and pressure
+                        ulcers
+                    </li>
+                    <li>
+                        <strong>Surgical Wounds</strong> - Post-operative
+                        incisions
+                    </li>
+                    <li>
+                        <strong>Venous Wounds</strong> - Ulcers caused by venous
+                        insufficiency
+                    </li>
+                </ul>
 
-      <h3>Wound Classifications</h3>
-      <p>Our system can identify and classify the following types of wounds:</p>
-      <ul style="line-height: 2;">
-        <li><strong>Abrasions</strong> - Surface scrapes and scratches</li>
-        <li><strong>Bruises</strong> - Contusions and hematomas</li>
-        <li><strong>Burns</strong> - Thermal, chemical, or electrical burns</li>
-        <li><strong>Cuts</strong> - Clean incisions and lacerations</li>
-        <li><strong>Diabetic Wounds</strong> - Ulcers related to diabetes</li>
-        <li><strong>Lacerations</strong> - Irregular tears in the skin</li>
-        <li><strong>Normal</strong> - Non-wound skin conditions</li>
-        <li><strong>Pressure Wounds</strong> - Bedsores and pressure ulcers</li>
-        <li><strong>Surgical Wounds</strong> - Post-operative incisions</li>
-        <li><strong>Venous Wounds</strong> - Ulcers caused by venous insufficiency</li>
-      </ul>
-
-      <h3>Our Mission</h3>
-      <p>
-        To provide accessible, accurate, and AI-powered wound care assistance to healthcare professionals and patients worldwide.
-        By combining cutting-edge technology with medical expertise, we aim to improve wound care outcomes and make quality healthcare more accessible.
-      </p>
-    </div>
-  </div>
-</body>
+                <h3>Our Mission</h3>
+                <p>
+                    To provide accessible, accurate, and AI-powered wound care
+                    assistance to healthcare professionals and patients
+                    worldwide. By combining cutting-edge technology with medical
+                    expertise, we aim to improve wound care outcomes and make
+                    quality healthcare more accessible.
+                </p>
+            </div>
+        </div>
+    </body>
 </html>
