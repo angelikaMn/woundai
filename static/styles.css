@@ -1895,7 +1895,7 @@ pre {
     justify-content: center;
     align-items: center;
     height: calc(100vh - 82px); /* Full viewport - navbar */
-    padding: 0 20px 50px 20px; /* Bottom padding = 50px gap */
+    padding: 40px 20px 50px 20px; /* Top/bottom padding for centering + 50px gap */
     overflow: hidden; /* Prevent page scroll */
     box-sizing: border-box;
 }
@@ -1904,7 +1904,7 @@ pre {
     width: 85vw; /* Landscape width - spans most of the screen horizontally */
     max-width: 1400px; /* Maximum width limit */
     height: auto; /* Auto height */
-    max-height: calc(100vh - 82px - 50px); /* Responsive: viewport - navbar - gap */
+    max-height: calc(100vh - 82px - 90px); /* Responsive: viewport - navbar - top padding (40px) - bottom gap (50px) */
     overflow-y: auto; /* Scrollable content */
     overflow-x: hidden;
     box-sizing: border-box;
