@@ -35,6 +35,9 @@
   <!-- Zoom Backdrop -->
   <div class="zoom-backdrop" id="zoomBackdrop"></div>
 
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
   <!-- Camera Modal -->
   <div class="camera-modal" id="cameraModal">
     <div class="camera-container">
@@ -206,6 +209,40 @@
     const clearFile = document.getElementById('clearFile');
     const inlineSpinner = document.getElementById('inlineSpinner');
 
+    // Toast Notification System
+    function showToast(type, title, message) {
+      const toastContainer = document.getElementById('toastContainer');
+      
+      // Icon mapping
+      const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
+      };
+      
+      // Create toast element
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <div class="toast-icon">${icons[type] || 'ℹ'}</div>
+        <div class="toast-content">
+          <div class="toast-title">${title}</div>
+          <div class="toast-message">${message}</div>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
+      `;
+      
+      toastContainer.appendChild(toast);
+      
+      // Auto remove after 3 seconds
+      setTimeout(() => {
+        if (toast.parentElement) {
+          toast.remove();
+        }
+      }, 3000);
+    }
+
   // Camera modal elements
   const cameraModal = document.getElementById('cameraModal');
   const cameraVideo = document.getElementById('cameraVideo');
@@ -250,7 +287,7 @@
         cameraModal.classList.add('active');
         await startCamera(currentFacingMode);
       } catch (err) {
-        alert('Unable to access camera: ' + err.message);
+        showToast('error', 'Camera Access Denied', 'Unable to access your camera. Please check your browser permissions and try again.');
         cameraModal.classList.remove('active');
       }
     });
@@ -386,7 +423,7 @@
         loadingOverlay.classList.remove('active');
         inlineSpinner.classList.remove('active');
         analyzeBtn.disabled = false;
-        alert('Gemini triage: ' + (uploadForm.dataset.triage_msg || 'Image is not a wound'));
+        showToast('error', 'Not a Wound Image', uploadForm.dataset.triage_msg || 'The uploaded image does not appear to be a wound. Please upload a valid wound image.');
         return;
       }
 
@@ -434,6 +471,11 @@
 
         // Display results on the page
         displayResults(result);
+        
+        // Show success toast if analysis completed
+        if (result.status === 'ok') {
+          showToast('success', 'Analysis Complete', `Wound classified as: ${result.pred_label} with ${result.confidence_pct}% confidence.`);
+        }
 
       } catch (error) {
         // Make sure to stop polling on error too
@@ -445,7 +487,7 @@
         loadingOverlay.classList.remove('active');
         inlineSpinner.classList.remove('active');
         analyzeBtn.disabled = false;
-        alert('Error during analysis: ' + error.message);
+        showToast('error', 'Analysis Failed', 'An error occurred during image analysis. Please try again.');
       }
     });
 
@@ -527,7 +569,7 @@
         uploadForm.dataset.triage_msg = j.message || '';
         if (!j.is_wound) {
           // Show a quick user-facing message and keep preview
-          alert('Not a wound image: ' + (j.message || 'Rejected by LLM'));
+          showToast('warning', 'Image Verification Failed', j.message || 'The uploaded image does not appear to be a wound. Please upload a clear wound image.');
           analyzeBtn.disabled = true;
         } else {
           analyzeBtn.disabled = false;
