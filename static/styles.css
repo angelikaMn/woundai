@@ -433,9 +433,9 @@ body > .header {
 }
 
 .content-container {
-    height: calc(100vh - 82px - 50px); /* Full viewport - navbar - bottom gap */
+    height: calc(100vh - 82px); /* Full viewport - navbar */
     overflow-y: auto;
-    padding: 24px;
+    padding: 24px 24px 50px 24px; /* Bottom padding = 50px gap */
     box-sizing: border-box;
 }
 
@@ -671,9 +671,9 @@ input[type="file"] {
 
 /* --- 2. Result Box (Bottom-Left) --- */
 #result-box {
-    height: 100%;
-    max-height: 300px;
-    min-height: 280px; /* Ensure a minimum height */
+    height: calc(100vh - 82px - 50px - 48px - 40px); /* Responsive: viewport - navbar - gap - padding - spacing */
+    max-height: calc((100vh - 82px - 50px - 48px - 40px) / 2); /* Responsive: (viewport - navbar - gap - padding - spacing) / 2 rows */
+    min-height: 250px; /* Minimum height */
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -776,8 +776,7 @@ input[type="file"] {
 
 /* --- 3. Gemini Box (Right) --- */
 #gemini-box {
-    height: 100%;
-    max-height: 100%;
+    height: calc(100vh - 82px - 50px - 48px); /* Responsive: viewport - navbar - gap - padding */
     display: flex;
     flex-direction: column;
     overflow: hidden; /* Prevent overflow from card */
@@ -843,7 +842,7 @@ input[type="file"] {
 }
 .gemini-content::-webkit-scrollbar-thumb {
     background: var(--color-primary-light);
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     border: 2px solid var(--color-bg-input);
 }
 .gemini-content::-webkit-scrollbar-thumb:hover {
@@ -1892,8 +1891,8 @@ pre {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 82px - 50px); /* Full viewport - navbar - bottom gap */
-    padding: 0 20px; /* Horizontal padding only */
+    height: calc(100vh - 82px); /* Full viewport - navbar */
+    padding: 0 20px 50px 20px; /* Bottom padding = 50px gap */
     overflow: hidden; /* Prevent page scroll */
     box-sizing: border-box;
 }
@@ -1901,8 +1900,8 @@ pre {
 .scrollable-container .card {
     width: 85vw; /* Landscape width - spans most of the screen horizontally */
     max-width: 1400px; /* Maximum width limit */
-    height: 75vh; /* Fixed landscape height - shorter than full viewport */
-    max-height: 650px; /* Maximum height limit to maintain landscape proportion */
+    height: auto; /* Auto height */
+    max-height: calc(100vh - 82px - 50px); /* Responsive: viewport - navbar - gap */
     overflow-y: auto; /* Scrollable content */
     overflow-x: hidden;
     box-sizing: border-box;
@@ -2019,10 +2018,11 @@ pre {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 25px;
-    height: calc(100vh - 82px - 50px); /* Full viewport - navbar - bottom gap */
-    padding: 25px;
+    height: calc(100vh - 82px); /* Full viewport - navbar */
+    padding: 25px 25px 50px 25px; /* Bottom padding = 50px gap */
     overflow: hidden;
     box-sizing: border-box;
+    max-height: 665px;
 }
 
 /* Left Section - Developers */
@@ -2036,7 +2036,7 @@ pre {
 
 .developers-card {
     height: 100%;
-    max-height: 100%;
+    max-height: calc(100vh - 82px - 50px - 50px - 25px); /* Responsive: viewport - navbar - gap - padding - spacing */
     overflow-y: auto;
     overflow-x: hidden;
     display: flex;
@@ -2163,7 +2163,7 @@ pre {
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
-    max-height: 100%;
+    max-height: calc(100vh - 82px - 50px - 50px - 25px - 150px); /* Responsive: viewport - navbar - gap - padding - spacing - project info */
     padding: 25px;
 }
 
