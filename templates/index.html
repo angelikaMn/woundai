@@ -733,31 +733,45 @@
 
               async function runTriage(file) {
                 // Run fast LLM triage via AJAX; set uploadForm.dataset.triage = 'true'|'false'
+                console.log('[runTriage] Starting Gemini validation...');
                 inlineSpinner.classList.add('active');
+                fileNameDisplay.textContent = 'Validating with Gemini AI...';
+                
                 try {
                   const fd = new FormData();
                   fd.append('image', file, file.name);
                   const resp = await fetch('/triage', { method: 'POST', body: fd });
+                  
                   if (!resp.ok) {
-                    console.warn('Triage request failed', resp.status);
+                    console.warn('[runTriage] Triage request failed', resp.status);
                     uploadForm.dataset.triage = 'true';
+                    fileNameDisplay.textContent = file.name;
                     return;
                   }
+                  
                   const j = await resp.json();
+                  console.log('[runTriage] Gemini response:', j);
+                  
                   uploadForm.dataset.triage = j.is_wound ? 'true' : 'false';
                   uploadForm.dataset.triage_msg = j.message || '';
+                  
                   if (!j.is_wound) {
                     // Show a quick user-facing message and keep preview
+                    console.log('[runTriage] ✗ Image rejected - not a wound');
                     showToast('warning', 'Image Verification Failed', j.message || 'The uploaded image does not appear to be a wound. Please upload a clear wound image.');
                     analyzeBtn.disabled = true;
+                    fileNameDisplay.textContent = file.name + ' (not a wound)';
                   } else {
+                    console.log('[runTriage] ✓ Image validated - is a wound/skin');
                     analyzeBtn.disabled = false;
+                    fileNameDisplay.textContent = file.name + ' (validated)';
                   }
                 } catch (err) {
-                  console.error('Triage error', err);
+                  console.error('[runTriage] Triage error', err);
                   // On error, be permissive and allow processing to continue server-side
                   uploadForm.dataset.triage = 'true';
                   analyzeBtn.disabled = false;
+                  fileNameDisplay.textContent = file.name;
                 } finally {
                   inlineSpinner.classList.remove('active');
                 }

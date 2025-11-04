@@ -286,41 +286,70 @@ def _get_gemini():
     return _gemini_model
 
 def gemini_check_is_wound(image_path: str):
+    """
+    Check if an image contains a wound or skin using Gemini vision model.
+    Returns (is_wound: bool, message: str)
+    """
     model = _get_gemini()
     if model is None:
+        print("[gemini_check_is_wound] Gemini API key not configured; skipping wound check.")
         return True, "Gemini API key not configured; skipping wound check."
 
-    prompt = "Answer ONLY with 'WOUND', 'NORMAL_SKIN', or 'NOT_WOUND' for this image. Use 'NORMAL_SKIN' for healthy skin without wounds, 'WOUND' for any type of wound or skin injury, and 'NOT_WOUND' for non-skin images."
+    prompt = """Analyze this image and respond with ONLY ONE of these exact words:
+- 'WOUND' if the image shows any type of wound, injury, cut, burn, ulcer, or damaged skin
+- 'NORMAL_SKIN' if the image shows healthy, uninjured skin
+- 'NOT_WOUND' if the image does not show skin at all (objects, animals, scenery, etc.)
+
+Answer with just the single word."""
+
     try:
-        resp = model.generate_content([prompt, genai.upload_file(image_path)])
+        # Load image and convert to PIL Image for Gemini
+        from PIL import Image
+        img = Image.open(image_path).convert("RGB")
+        
+        print(f"[gemini_check_is_wound] Analyzing image: {image_path}")
+        
+        # Generate content with image
+        resp = model.generate_content([prompt, img])
+        
+        # Get response text
+        if not resp or not hasattr(resp, 'text'):
+            print(f"[gemini_check_is_wound] Empty response from Gemini")
+            return True, "Gemini returned empty response; proceeding as wound."
+        
         txt = (resp.text or "").strip().upper()
-        # Normalize and check whole-word patterns. Model replies sometimes include
-        # variants like 'NOT WOUND', 'NOT_WOUND', or 'NOT-WOUND', and naive
-        # substring checks (e.g. 'NOT_WOUND' contains 'WOUND') cause logic errors.
+        print(f"[gemini_check_is_wound] Raw Gemini response: {txt}")
+        
+        # Normalize and check whole-word patterns
         import re
         
         # Check for NORMAL_SKIN first (allow normal skin to proceed)
         if re.search(r"\bNORMAL[_\-\s]?SKIN\b", txt):
-            print(f"[gemini_check_is_wound] Gemini response (interpreted as NORMAL_SKIN): {txt}")
-            return True, "normal skin detected - will classify as 'Normal' class"
+            print(f"[gemini_check_is_wound] ✓ Detected NORMAL_SKIN")
+            return True, "Normal skin detected - will classify as 'Normal' class"
         
         # Check negative: variants of NOT WOUND (reject non-skin images)
         if re.search(r"\bNOT[_\-\s]?WOUND\b", txt):
-            print(f"[gemini_check_is_wound] Gemini response (interpreted as NOT_WOUND): {txt}")
-            return False, "that is not a wound or skin image"
+            print(f"[gemini_check_is_wound] ✗ Detected NOT_WOUND")
+            return False, "The uploaded image does not appear to be a wound or skin image. Please upload a valid wound image."
         
         # Then check positive 'WOUND' (but won't match 'NOT_WOUND' now)
         if re.search(r"\bWOUND\b", txt):
-            print(f"[gemini_check_is_wound] Gemini response (interpreted as WOUND): {txt}")
-            return True, "wound image detected"
+            print(f"[gemini_check_is_wound] ✓ Detected WOUND")
+            return True, "Wound image detected"
 
         # If the model reply is ambiguous or doesn't contain the expected tokens,
-        # fall back to permissive behavior (allow processing) but include the
-        # raw Gemini text in the message for debugging.
-        print(f"[gemini_check_is_wound] Gemini response ambiguous: {txt}")
-        return True, f"Gemini unclear ('{txt}'); proceeding as wound."
+        # fall back to permissive behavior (allow processing)
+        print(f"[gemini_check_is_wound] ⚠ Ambiguous response: {txt}")
+        return True, f"Gemini response unclear ('{txt}'); proceeding as wound."
+        
     except Exception as e:
-        return True, f"Gemini check failed ({e}); proceeding as wound."
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"[gemini_check_is_wound] ✗ Error during Gemini check:")
+        print(error_details)
+        # Be permissive on error - allow processing to continue
+        return True, f"Gemini check failed ({str(e)}); proceeding as wound."
 
 def gemini_penanganan(pred_label: str, original_path: str, heatmap_path: str, overlay_path: str) -> str:
     model = _get_gemini()
@@ -341,13 +370,23 @@ penting: koreksi jika prediksi salah. lihat original path berikan maksud sebenar
 """.strip()
 
     try:
+        # Load images using PIL
+        from PIL import Image
+        original_img = Image.open(original_path).convert("RGB")
+        overlay_img = Image.open(overlay_path).convert("RGB")
+        
+        # Generate content with both images
         resp = model.generate_content([
             prompt,
-            genai.upload_file(original_path),
-            genai.upload_file(overlay_path),
+            original_img,
+            overlay_img,
         ])
         return resp.text or "(Tidak ada teks dari Gemini.)"
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"[gemini_penanganan] Error:")
+        print(error_details)
         return f"Analisis Gemini gagal: {e}"
 
 # --------------- Global progress tracking ---------------

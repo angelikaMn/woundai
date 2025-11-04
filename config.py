@@ -26,10 +26,11 @@ CLASS_NAMES = [
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
-# ---- Gemini / Vertex AI ----
-# Vertex AI API key for Gemini 2.0 Flash Lite (faster and more efficient)
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AQ.Ab8RN6K8sXdQxIPX5Ct1qMa3088fnDmOLFtZ15btsXLyW6Kv2Q")
-GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash-lite")
+# ---- Gemini / Google AI ----
+# Google AI Studio API key (get yours from https://makersuite.google.com/app/apikey)
+# Valid model names: gemini-2.0-flash, gemini-1.5-flash, gemini-1.5-pro, gemini-pro-vision
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyDQHrlo0jwv30-XXaFIorq0pK40gGOIbr0")
+GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-2.0-flash")
 
 # Control whether the model should be preloaded at app startup. Default to False
 # so that lightweight LLM triage can run before loading the heavy model.
