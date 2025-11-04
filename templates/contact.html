@@ -28,16 +28,17 @@
         <!-- Navigation Bar -->
         <nav class="navbar">
             <div class="navbar-logo">
-                <a href="/">
+                <a href="/" class="logo-link">
                     <img
                         src="/static/wound.png"
                         alt="WoundAI Logo"
                         onerror="this.style.display='none'"
                     />
+                    <span class="logo-text">WoundAI</span>
                 </a>
             </div>
             <div class="navbar-links">
-                <!-- Theme Toggle Button -->
+                <!-- Theme Toggle Button (Always Visible) -->
                 <button
                     class="theme-toggle"
                     aria-label="Toggle dark mode"
@@ -69,131 +70,190 @@
                         </svg>
                     </span>
                 </button>
-                <a href="/" class="nav-link">Home</a>
-                <a href="/about" class="nav-link">About</a>
-                <a href="/contact" class="nav-link active">Contact</a>
+                
+                <!-- Desktop Navigation Links -->
+                <div class="nav-menu">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about" class="nav-link">About</a>
+                    <a href="/contact" class="nav-link active">Contact</a>
+                </div>
+                
+                <!-- Mobile Hamburger Menu Button -->
+                <button class="hamburger-menu" id="hamburgerBtn" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu Dropdown -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="/" class="mobile-nav-link">Home</a>
+                <a href="/about" class="mobile-nav-link">About</a>
+                <a href="/contact" class="mobile-nav-link active">Contact</a>
             </div>
         </nav>
+        
+        <script>
+            // Hamburger Menu Functionality
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
 
-        <div class="header">
-            <div class="header-text">
-                <h2>Contact Us</h2>
-                <p class="subtitle">
-                    Get in touch with the WoundAI team. We'd love to hear from
-                    you!
-                </p>
+            hamburgerBtn.addEventListener('click', function() {
+              hamburgerBtn.classList.toggle('active');
+              mobileMenu.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function(e) {
+              if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                hamburgerBtn.classList.remove('active');
+                mobileMenu.classList.remove('active');
+              }
+            });
+
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+              link.addEventListener('click', function() {
+                hamburgerBtn.classList.remove('active');
+                mobileMenu.classList.remove('active');
+              });
+            });
+        </script>
+
+        <!-- Contact Page Container -->
+        <div class="contact-container">
+            <!-- Left Section: Developers -->
+            <div class="contact-left">
+                <div class="card developers-card">
+                    <!-- Developers Grid - 4 Developers Only -->
+                    <div class="developers-grid-final">
+                        <!-- Developer 1 -->
+                        <div class="dev-item-final">
+                            <div class="dev-photo-final">
+                                <img src="/static/wound.png" alt="Developer 1" />
+                            </div>
+                            <div class="dev-info-final">
+                                <p><strong>Name:</strong></p>
+                                <p><strong>Email:</strong></p>
+                                <p><strong>Github:</strong></p>
+                            </div>
+                        </div>
+
+                        <!-- Developer 2 -->
+                        <div class="dev-item-final">
+                            <div class="dev-photo-final">
+                                <img src="/static/wound.png" alt="Developer 2" />
+                            </div>
+                            <div class="dev-info-final">
+                                <p><strong>Name:</strong></p>
+                                <p><strong>Email:</strong></p>
+                                <p><strong>Github:</strong></p>
+                            </div>
+                        </div>
+
+                        <!-- Developer 3 -->
+                        <div class="dev-item-final">
+                            <div class="dev-photo-final">
+                                <img src="/static/wound.png" alt="Developer 3" />
+                            </div>
+                            <div class="dev-info-final">
+                                <p><strong>Name:</strong></p>
+                                <p><strong>Email:</strong></p>
+                                <p><strong>Github:</strong></p>
+                            </div>
+                        </div>
+
+                        <!-- Developer 4 -->
+                        <div class="dev-item-final">
+                            <div class="dev-photo-final">
+                                <img src="/static/wound.png" alt="Developer 4" />
+                            </div>
+                            <div class="dev-info-final">
+                                <p><strong>Name:</strong></p>
+                                <p><strong>Email:</strong></p>
+                                <p><strong>Github:</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <img
-                src="/static/wound.png"
-                alt="WoundAI Logo"
-                class="logo"
-                onerror="this.style.display='none'"
-            />
-        </div>
 
-        <div class="main-grid">
-            <div class="left-column">
-                <div class="card">
-                    <h3>Send us a Message</h3>
-                    <form class="contact-form" method="POST" action="/contact">
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                required
-                                placeholder="Your name"
-                            />
+            <!-- Right Section -->
+            <div class="contact-right">
+                <!-- Project Information -->
+                <div class="card project-info-card">
+                    <div class="project-header">
+                        <img src="/static/wound.png" alt="WoundAI Logo" class="project-logo" />
+                        <div class="project-brief">
+                            <p>
+                                Terima kasih telah menggunakan WoundAI! Kami adalah tim developer yang bersemangat menciptakan solusi kesehatan berbasis AI yang mudah digunakan. Setiap fitur dirancang dengan cermat untuk membantu Anda mendapatkan informasi perawatan luka yang cepat dan akurat. Saran dan feedback Anda sangat berarti bagi kami!
+                            </p>
+                            <div class="project-tech">
+                                <span class="tech-badge">Flask</span>
+                                <span class="tech-badge">TensorFlow</span>
+                                <span class="tech-badge">Gemini AI</span>
+                                <span class="tech-badge">EfficientNetB1</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="card contact-form-card">
+                    <h3>Hubungi Kami</h3>
+                    <form class="contact-form-compact" method="POST" action="/contact">
+                        <div class="form-row">
+                            <div class="form-group-compact">
+                                <label for="name">Nama</label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    required
+                                    placeholder="Nama Anda"
+                                />
+                            </div>
+                            <div class="form-group-compact">
+                                <label for="email">Email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    required
+                                    placeholder="email@example.com"
+                                />
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                required
-                                placeholder="your.email@example.com"
-                            />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="subject">Subject</label>
+                        <div class="form-group-compact">
+                            <label for="subject">Subjek</label>
                             <input
                                 type="text"
                                 id="subject"
                                 name="subject"
                                 required
-                                placeholder="What is this regarding?"
+                                placeholder="Perihal pesan Anda"
                             />
                         </div>
 
-                        <div class="form-group">
-                            <label for="message">Message</label>
+                        <div class="form-group-compact">
+                            <label for="message">Pesan</label>
                             <textarea
                                 id="message"
                                 name="message"
-                                rows="6"
+                                rows="4"
                                 required
-                                placeholder="Your message here..."
+                                placeholder="Tulis pesan Anda di sini..."
                             ></textarea>
                         </div>
 
-                        <button type="submit" class="btn">Send Message</button>
+                        <button type="submit" class="btn-submit">Kirim Pesan</button>
+
+                        {% if message_sent %}
+                        <div class="success-message">
+                            Terima kasih! Pesan Anda telah berhasil dikirim.
+                        </div>
+                        {% endif %}
                     </form>
-
-                    {% if message_sent %}
-                    <div class="ok" style="margin-top: 20px">
-                        Thank you! Your message has been sent successfully.
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="right-column">
-                <div class="card">
-                    <h3>Development Team</h3>
-                    <p>
-                        <strong>Angelikaw</strong> & <strong>Avrillia</strong>
-                    </p>
-                    <p style="color: #aaa; margin-top: 20px">
-                        WoundAI is developed and maintained by a dedicated team
-                        of developers and healthcare technology enthusiasts. We
-                        are committed to improving healthcare accessibility
-                        through innovative AI solutions.
-                    </p>
-                </div>
-
-                <div class="card">
-                    <h3>Project Information</h3>
-                    <p>
-                        <strong>Technology Stack:</strong>
-                    </p>
-                    <ul style="line-height: 2">
-                        <li>Flask (Python Web Framework)</li>
-                        <li>TensorFlow & Keras</li>
-                        <li>Google Gemini AI</li>
-                        <li>EfficientNetB1 Model</li>
-                    </ul>
-
-                    <p style="margin-top: 20px">
-                        <strong>Deployment:</strong><br />
-                        Hosted on Google Cloud Platform with automated CI/CD via
-                        Jenkins
-                    </p>
-                </div>
-
-                <div class="card">
-                    <h3>Disclaimer</h3>
-                    <p style="color: #ff9060; font-size: 0.9rem">
-                        <strong>Important:</strong> WoundAI is an AI-powered
-                        tool designed to assist with wound identification and
-                        provide general treatment recommendations. It is not a
-                        substitute for professional medical advice, diagnosis,
-                        or treatment. Always consult with qualified healthcare
-                        professionals for medical concerns.
-                    </p>
                 </div>
             </div>
         </div>

@@ -28,16 +28,17 @@
         <!-- Navigation Bar -->
         <nav class="navbar">
             <div class="navbar-logo">
-                <a href="/">
+                <a href="/" class="logo-link">
                     <img
                         src="/static/wound.png"
                         alt="WoundAI Logo"
                         onerror="this.style.display='none'"
                     />
+                    <span class="logo-text">WoundAI</span>
                 </a>
             </div>
             <div class="navbar-links">
-                <!-- Theme Toggle Button -->
+                <!-- Theme Toggle Button (Always Visible) -->
                 <button
                     class="theme-toggle"
                     aria-label="Toggle dark mode"
@@ -69,9 +70,27 @@
                         </svg>
                     </span>
                 </button>
-                <a href="/" class="nav-link active">Home</a>
-                <a href="/about" class="nav-link">About</a>
-                <a href="/contact" class="nav-link">Contact</a>
+                
+                <!-- Desktop Navigation Links -->
+                <div class="nav-menu">
+                    <a href="/" class="nav-link active">Home</a>
+                    <a href="/about" class="nav-link">About</a>
+                    <a href="/contact" class="nav-link">Contact</a>
+                </div>
+                
+                <!-- Mobile Hamburger Menu Button -->
+                <button class="hamburger-menu" id="hamburgerBtn" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu Dropdown -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="/" class="mobile-nav-link active">Home</a>
+                <a href="/about" class="mobile-nav-link">About</a>
+                <a href="/contact" class="mobile-nav-link">Contact</a>
             </div>
         </nav>
 
@@ -112,94 +131,94 @@
             <div class="welcome-modal-content">
                 <button class="modal-close-btn" id="closeModalBtn">✕</button>
                 <div class="modal-header">
-                    <h2>Welcome to WoundAI</h2>
-                    <p class="modal-subtitle">
-                        Your AI-Powered Wound Analysis Assistant
-                    </p>
+                    <h2>Selamat Datang di WoundAI</h2>
                 </div>
 
                 <div class="modal-body">
+                    <!-- Deskripsi Sistem -->
                     <section class="modal-section">
-                        <h3>📋 About This Project</h3>
+                        <h3>
+                            <svg class="section-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <line x1="10" y1="9" x2="8" y2="9"></line>
+                            </svg>
+                            Tentang Sistem
+                        </h3>
                         <p>
-                            WoundAI is an advanced medical AI application that
-                            automatically detects, classifies, and provides
-                            treatment recommendations for different types of
-                            wounds. Powered by EfficientNetB1 deep learning
-                            model and Google's Gemini AI, we deliver accurate
-                            wound classification with explainable AI
-                            visualizations.
+                            WoundAI adalah aplikasi AI medis yang secara otomatis mendeteksi, 
+                            mengklasifikasikan, dan memberikan rekomendasi perawatan untuk berbagai 
+                            jenis luka. Didukung oleh model deep learning EfficientNetB1 dan 
+                            Google Gemini AI, kami memberikan klasifikasi luka yang akurat dengan 
+                            visualisasi AI yang dapat dijelaskan.
                         </p>
                     </section>
 
+                    <!-- Tutorial Section -->
                     <section class="modal-section">
-                        <h3>🎯 How to Use</h3>
-                        <ol>
-                            <li>
-                                <strong>Upload an Image:</strong> Click "Choose
-                                File" or use the "Camera" button to capture a
-                                wound photo
-                            </li>
-                            <li>
-                                <strong>Gemini Triage:</strong> The AI will
-                                automatically verify that your image contains an
-                                actual wound
-                            </li>
-                            <li>
-                                <strong>Analyze:</strong> Click the "Analyze"
-                                button to start the wound classification process
-                            </li>
-                            <li>
-                                <strong>Review Results:</strong> View the
-                                predicted wound type, confidence score, and
-                                Grad-CAM visualization
-                            </li>
-                            <li>
-                                <strong>Read Recommendations:</strong> Get
-                                detailed treatment suggestions from Gemini LLM
-                                in Indonesian
-                            </li>
-                        </ol>
+                        <h3>
+                            <svg class="section-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            Cara Menggunakan
+                        </h3>
+                        
+                        <!-- Langkah 1 -->
+                        <div class="tutorial-step">
+                            <h4>Langkah 1: Unggah Gambar Luka</h4>
+                            <p>
+                                LLM akan memvalidasi apakah gambar yang diunggah mengandung luka pada kulit atau tidak. 
+                                Anda dapat mengunggah gambar melalui <strong>File</strong> atau langsung dari <strong>Kamera</strong>.
+                            </p>
+                            <div class="tutorial-image">
+                                <img src="/static/1.png" alt="Tutorial Upload" />
+                            </div>
+                        </div>
+
+                        <!-- Langkah 2 -->
+                        <div class="tutorial-step">
+                            <h4>Langkah 2: Hasil Prediksi</h4>
+                            <p>
+                                Hasil prediksi gambar akan ditampilkan di sini beserta gambar <strong>Grad-CAM</strong> 
+                                dan <strong>Overlay</strong>, serta jenis luka hasil prediksi model.
+                            </p>
+                            <div class="tutorial-image">
+                                <img src="/static/2.png" alt="Tutorial Result" />
+                            </div>
+                        </div>
+
+                        <!-- Langkah 3 -->
+                        <div class="tutorial-step">
+                            <h4>Langkah 3: Rekomendasi Penanganan</h4>
+                            <p>
+                                Section ini menampilkan cara untuk menangani dan merawat luka yang dihasilkan 
+                                oleh LLM berdasarkan jenis luka yang diprediksi model.
+                            </p>
+                            <div class="tutorial-image">
+                                <img src="/static/3.png" alt="Tutorial Gemini" />
+                            </div>
+                        </div>
                     </section>
 
-                    <section class="modal-section">
-                        <h3>✨ Expected Results</h3>
-                        <ul>
-                            <li>
-                                <strong>Wound Classification:</strong>
-                                Identification of 10 wound types (Abrasions,
-                                Bruises, Burns, Cuts, Diabetic Wounds,
-                                Lacerations, Normal, Pressure Wounds, Surgical
-                                Wounds, Venous Wounds)
-                            </li>
-                            <li>
-                                <strong>Confidence Score:</strong> Percentage
-                                indicating the model's certainty in its
-                                prediction
-                            </li>
-                            <li>
-                                <strong>Grad-CAM Heatmap:</strong> Visual
-                                explanation showing which parts of the image
-                                influenced the AI's decision
-                            </li>
-                            <li>
-                                <strong>Overlay Visualization:</strong> Heatmap
-                                overlaid on the original image for better
-                                context
-                            </li>
-                            <li>
-                                <strong>Treatment Recommendations:</strong>
-                                Clinically-backed suggestions for wound care in
-                                Indonesian language
-                            </li>
-                        </ul>
+                    <!-- Informasi Platform -->
+                    <section class="modal-section modal-info-section">
+                        <p>
+                            <svg class="inline-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <strong>Tutorial ini berlaku untuk platform Web dan Mobile</strong>
+                        </p>
                     </section>
 
+                    <!-- Note -->
                     <section class="modal-section modal-footer-section">
                         <p>
-                            <strong>Note:</strong> This tool is designed to
-                            assist healthcare professionals and should not
-                            replace professional medical advice.
+                            <strong>Catatan:</strong> Alat ini dirancang untuk membantu tenaga 
+                            kesehatan profesional dan tidak boleh menggantikan nasihat medis profesional.
                         </p>
                     </section>
                 </div>
@@ -862,6 +881,31 @@
                   zoomBackdrop.classList.remove('active');
                   document.body.style.overflow = '';
                 }
+              });
+
+              // --- Hamburger Menu Functionality ---
+              const hamburgerBtn = document.getElementById('hamburgerBtn');
+              const mobileMenu = document.getElementById('mobileMenu');
+
+              hamburgerBtn.addEventListener('click', function() {
+                hamburgerBtn.classList.toggle('active');
+                mobileMenu.classList.toggle('active');
+              });
+
+              // Close mobile menu when clicking outside
+              document.addEventListener('click', function(e) {
+                if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                  hamburgerBtn.classList.remove('active');
+                  mobileMenu.classList.remove('active');
+                }
+              });
+
+              // Close mobile menu when clicking a link
+              document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', function() {
+                  hamburgerBtn.classList.remove('active');
+                  mobileMenu.classList.remove('active');
+                });
               });
         </script>
     </body>

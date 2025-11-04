@@ -26,10 +26,10 @@ CLASS_NAMES = [
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
-# ---- Gemini ----
-# Set GEMINI_API_KEY in your environment before running the app
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyA41s8Xu9VXiCpZhIWiRDOvUMWYXu9TqxE")
-GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-2.0-flash")
+# ---- Gemini / Vertex AI ----
+# Vertex AI API key for Gemini 2.0 Flash Lite (faster and more efficient)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AQ.Ab8RN6K8sXdQxIPX5Ct1qMa3088fnDmOLFtZ15btsXLyW6Kv2Q")
+GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash-lite")
 
 # Control whether the model should be preloaded at app startup. Default to False
 # so that lightweight LLM triage can run before loading the heavy model.

@@ -1,4 +1,8 @@
 import os
+
+# Suppress TensorFlow logging messages but keep oneDNN optimizations for max performance
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Hide INFO and WARNING logs
+
 import uuid
 from typing import Tuple, Optional, List
 import numpy as np
@@ -286,7 +290,7 @@ def gemini_check_is_wound(image_path: str):
     if model is None:
         return True, "Gemini API key not configured; skipping wound check."
 
-    prompt = "Answer ONLY with 'WOUND' or 'NOT_WOUND' for this image."
+    prompt = "Answer ONLY with 'WOUND', 'NORMAL_SKIN', or 'NOT_WOUND' for this image. Use 'NORMAL_SKIN' for healthy skin without wounds, 'WOUND' for any type of wound or skin injury, and 'NOT_WOUND' for non-skin images."
     try:
         resp = model.generate_content([prompt, genai.upload_file(image_path)])
         txt = (resp.text or "").strip().upper()
@@ -294,10 +298,17 @@ def gemini_check_is_wound(image_path: str):
         # variants like 'NOT WOUND', 'NOT_WOUND', or 'NOT-WOUND', and naive
         # substring checks (e.g. 'NOT_WOUND' contains 'WOUND') cause logic errors.
         import re
-        # Check negative first: variants of NOT WOUND
+        
+        # Check for NORMAL_SKIN first (allow normal skin to proceed)
+        if re.search(r"\bNORMAL[_\-\s]?SKIN\b", txt):
+            print(f"[gemini_check_is_wound] Gemini response (interpreted as NORMAL_SKIN): {txt}")
+            return True, "normal skin detected - will classify as 'Normal' class"
+        
+        # Check negative: variants of NOT WOUND (reject non-skin images)
         if re.search(r"\bNOT[_\-\s]?WOUND\b", txt):
             print(f"[gemini_check_is_wound] Gemini response (interpreted as NOT_WOUND): {txt}")
-            return False, "that is not a wound image"
+            return False, "that is not a wound or skin image"
+        
         # Then check positive 'WOUND' (but won't match 'NOT_WOUND' now)
         if re.search(r"\bWOUND\b", txt):
             print(f"[gemini_check_is_wound] Gemini response (interpreted as WOUND): {txt}")

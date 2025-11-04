@@ -28,16 +28,17 @@
         <!-- Navigation Bar -->
         <nav class="navbar">
             <div class="navbar-logo">
-                <a href="/">
+                <a href="/" class="logo-link">
                     <img
                         src="/static/wound.png"
                         alt="WoundAI Logo"
                         onerror="this.style.display='none'"
                     />
+                    <span class="logo-text">WoundAI</span>
                 </a>
             </div>
             <div class="navbar-links">
-                <!-- Theme Toggle Button -->
+                <!-- Theme Toggle Button (Always Visible) -->
                 <button
                     class="theme-toggle"
                     aria-label="Toggle dark mode"
@@ -69,97 +70,216 @@
                         </svg>
                     </span>
                 </button>
-                <a href="/" class="nav-link">Home</a>
-                <a href="/about" class="nav-link active">About</a>
-                <a href="/contact" class="nav-link">Contact</a>
+                
+                <!-- Desktop Navigation Links -->
+                <div class="nav-menu">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about" class="nav-link active">About</a>
+                    <a href="/contact" class="nav-link">Contact</a>
+                </div>
+                
+                <!-- Mobile Hamburger Menu Button -->
+                <button class="hamburger-menu" id="hamburgerBtn" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu Dropdown -->
+            <div class="mobile-menu" id="mobileMenu">
+                <a href="/" class="mobile-nav-link">Home</a>
+                <a href="/about" class="mobile-nav-link active">About</a>
+                <a href="/contact" class="mobile-nav-link">Contact</a>
             </div>
         </nav>
+        
+        <script>
+            // Hamburger Menu Functionality
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+
+            hamburgerBtn.addEventListener('click', function() {
+              hamburgerBtn.classList.toggle('active');
+              mobileMenu.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function(e) {
+              if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                hamburgerBtn.classList.remove('active');
+                mobileMenu.classList.remove('active');
+              }
+            });
+
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+              link.addEventListener('click', function() {
+                hamburgerBtn.classList.remove('active');
+                mobileMenu.classList.remove('active');
+              });
+            });
+        </script>
 
         <div class="scrollable-container">
             <div class="card">
-                <h3>What is WoundAI?</h3>
-                <p>
-                    WoundAI is an advanced medical AI application designed to
-                    automatically detect, classify, and provide treatment
-                    recommendations for different types of wounds. Using
-                    state-of-the-art deep learning technology and large language
-                    models, we aim to assist healthcare professionals and
-                    individuals in identifying and treating wounds more
-                    effectively.
-                </p>
+                <!-- Tentang Sistem -->
+                <section class="about-section">
+                    <h3>
+                        <svg class="section-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <line x1="10" y1="9" x2="8" y2="9"></line>
+                        </svg>
+                        Tentang Sistem
+                    </h3>
+                    <p>
+                        WoundAI adalah aplikasi AI medis yang secara otomatis mendeteksi, 
+                        mengklasifikasikan, dan memberikan rekomendasi perawatan untuk berbagai 
+                        jenis luka. Didukung oleh model deep learning EfficientNetB1 dan 
+                        Google Gemini AI, kami memberikan klasifikasi luka yang akurat dengan 
+                        visualisasi AI yang dapat dijelaskan.
+                    </p>
+                </section>
 
-                <h3>Our Technology</h3>
-                <p>
-                    <strong>Deep Learning Model:</strong> We use EfficientNetB1,
-                    a powerful convolutional neural network, to classify wounds
-                    into 10 different categories with high accuracy.
-                </p>
-                <p>
-                    <strong>AI Triage:</strong> Google's Gemini AI performs
-                    preliminary verification to ensure uploaded images contain
-                    actual wounds before processing.
-                </p>
-                <p>
-                    <strong>Explainable AI:</strong> Grad-CAM (Gradient-weighted
-                    Class Activation Mapping) visualization helps users
-                    understand which parts of the image influenced the AI's
-                    decision.
-                </p>
-                <p>
-                    <strong>Treatment Recommendations:</strong> Gemini LLM
-                    provides detailed, clinically-backed treatment suggestions
-                    in Indonesian language.
-                </p>
+                <!-- Cara Menggunakan -->
+                <section class="about-section">
+                    <h3>
+                        <svg class="section-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Cara Menggunakan
+                    </h3>
+                    
+                    <!-- Langkah 1 -->
+                    <div class="tutorial-step">
+                        <h4>Langkah 1: Unggah Gambar Luka</h4>
+                        <p>
+                            LLM akan memvalidasi apakah gambar yang diunggah mengandung luka pada kulit atau tidak. 
+                            Anda dapat mengunggah gambar melalui <strong>File</strong> atau langsung dari <strong>Kamera</strong>.
+                        </p>
+                        <div class="tutorial-image">
+                            <img src="/static/1.png" alt="Tutorial Upload" />
+                        </div>
+                    </div>
 
-                <h3>Wound Classifications</h3>
-                <p>
-                    Our system can identify and classify the following types of
-                    wounds:
-                </p>
-                <ul style="line-height: 2">
-                    <li>
-                        <strong>Abrasions</strong> - Surface scrapes and
-                        scratches
-                    </li>
-                    <li><strong>Bruises</strong> - Contusions and hematomas</li>
-                    <li>
-                        <strong>Burns</strong> - Thermal, chemical, or
-                        electrical burns
-                    </li>
-                    <li>
-                        <strong>Cuts</strong> - Clean incisions and lacerations
-                    </li>
-                    <li>
-                        <strong>Diabetic Wounds</strong> - Ulcers related to
-                        diabetes
-                    </li>
-                    <li>
-                        <strong>Lacerations</strong> - Irregular tears in the
-                        skin
-                    </li>
-                    <li><strong>Normal</strong> - Non-wound skin conditions</li>
-                    <li>
-                        <strong>Pressure Wounds</strong> - Bedsores and pressure
-                        ulcers
-                    </li>
-                    <li>
-                        <strong>Surgical Wounds</strong> - Post-operative
-                        incisions
-                    </li>
-                    <li>
-                        <strong>Venous Wounds</strong> - Ulcers caused by venous
-                        insufficiency
-                    </li>
-                </ul>
+                    <!-- Langkah 2 -->
+                    <div class="tutorial-step">
+                        <h4>Langkah 2: Hasil Prediksi</h4>
+                        <p>
+                            Hasil prediksi gambar akan ditampilkan di sini beserta gambar <strong>Grad-CAM</strong> 
+                            dan <strong>Overlay</strong>, serta jenis luka hasil prediksi model.
+                        </p>
+                        <div class="tutorial-image">
+                            <img src="/static/2.png" alt="Tutorial Result" />
+                        </div>
+                    </div>
 
-                <h3>Our Mission</h3>
-                <p>
-                    To provide accessible, accurate, and AI-powered wound care
-                    assistance to healthcare professionals and patients
-                    worldwide. By combining cutting-edge technology with medical
-                    expertise, we aim to improve wound care outcomes and make
-                    quality healthcare more accessible.
-                </p>
+                    <!-- Langkah 3 -->
+                    <div class="tutorial-step">
+                        <h4>Langkah 3: Rekomendasi Penanganan</h4>
+                        <p>
+                            Section ini menampilkan cara untuk menangani dan merawat luka yang dihasilkan 
+                            oleh LLM berdasarkan jenis luka yang diprediksi model.
+                        </p>
+                        <div class="tutorial-image">
+                            <img src="/static/3.png" alt="Tutorial Gemini" />
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Teknologi Kami -->
+                <section class="about-section">
+                    <h3>
+                        <svg class="section-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                        Teknologi Kami
+                    </h3>
+                    <p>
+                        <strong>Model Deep Learning:</strong> Kami menggunakan EfficientNetB1, 
+                        jaringan neural konvolusional yang powerful, untuk mengklasifikasikan luka 
+                        ke dalam 10 kategori berbeda dengan akurasi tinggi.
+                    </p>
+                    <p>
+                        <strong>AI Triage:</strong> Google Gemini AI melakukan verifikasi awal 
+                        untuk memastikan gambar yang diunggah mengandung luka sebelum diproses.
+                    </p>
+                    <p>
+                        <strong>Explainable AI:</strong> Visualisasi Grad-CAM (Gradient-weighted 
+                        Class Activation Mapping) membantu pengguna memahami bagian mana dari gambar 
+                        yang mempengaruhi keputusan AI.
+                    </p>
+                    <p>
+                        <strong>Rekomendasi Perawatan:</strong> Gemini LLM memberikan saran perawatan 
+                        yang detail dan didukung secara klinis dalam bahasa Indonesia.
+                    </p>
+                </section>
+
+                <!-- Klasifikasi Luka -->
+                <section class="about-section">
+                    <h3>
+                        <svg class="section-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        Klasifikasi Luka
+                    </h3>
+                    <p>
+                        Sistem kami dapat mengidentifikasi dan mengklasifikasikan jenis luka berikut:
+                    </p>
+                    <ul style="line-height: 2">
+                        <li><strong>Abrasions</strong> - Goresan dan lecet permukaan</li>
+                        <li><strong>Bruises</strong> - Memar dan hematoma</li>
+                        <li><strong>Burns</strong> - Luka bakar termal, kimia, atau listrik</li>
+                        <li><strong>Cuts</strong> - Sayatan dan luka iris bersih</li>
+                        <li><strong>Diabetic Wounds</strong> - Ulkus terkait diabetes</li>
+                        <li><strong>Lacerations</strong> - Robekan tidak beraturan pada kulit</li>
+                        <li><strong>Normal</strong> - Kondisi kulit non-luka</li>
+                        <li><strong>Pressure Wounds</strong> - Luka dekubitus dan ulkus tekanan</li>
+                        <li><strong>Surgical Wounds</strong> - Sayatan pasca operasi</li>
+                        <li><strong>Venous Wounds</strong> - Ulkus akibat insufisiensi vena</li>
+                    </ul>
+                </section>
+
+                <!-- Informasi Platform -->
+                <section class="about-section info-highlight">
+                    <p>
+                        <svg class="inline-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <strong>Sistem ini dapat diakses melalui platform Web dan Mobile</strong>
+                    </p>
+                </section>
+
+                <!-- Misi Kami -->
+                <section class="about-section">
+                    <h3>
+                        <svg class="section-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        Misi Kami
+                    </h3>
+                    <p>
+                        Menyediakan bantuan perawatan luka yang dapat diakses, akurat, dan didukung AI 
+                        untuk profesional kesehatan dan pasien di seluruh dunia. Dengan menggabungkan 
+                        teknologi mutakhir dengan keahlian medis, kami bertujuan untuk meningkatkan 
+                        hasil perawatan luka dan membuat layanan kesehatan berkualitas lebih mudah diakses.
+                    </p>
+                </section>
+
+                <!-- Catatan -->
+                <section class="about-section note-section">
+                    <p>
+                        <strong>Catatan:</strong> Alat ini dirancang untuk membantu tenaga 
+                        kesehatan profesional dan tidak boleh menggantikan nasihat medis profesional.
+                    </p>
+                </section>
             </div>
         </div>
     </body>

@@ -27,5 +27,8 @@ dist/
 .DS_Store
 Thumbs.db
 
+# Flask environment
+.flaskenv
+
 # Flask static/uploads (optional - uncomment to ignore uploaded files)
 # uploads/
