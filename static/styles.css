@@ -118,6 +118,8 @@ body {
     color: var(--color-text-primary);
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 /* Ensure all elements inherit the font consistently */
@@ -125,6 +127,7 @@ body {
 *::before,
 *::after {
     font-family: inherit;
+    box-sizing: border-box; /* Include padding and border in element width */
 }
 
 /* Standardize heading styles */
@@ -424,12 +427,15 @@ body > .header {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
     gap: 20px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 .left-column,
 .right-column {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-width: 0; /* Prevent flex items from overflowing */
 }
 
 .content-container {
@@ -480,6 +486,9 @@ body > .header {
     display: flex;
     gap: 20px;
     align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 .upload-controls {
     flex: 1;
@@ -487,6 +496,7 @@ body > .header {
     flex-direction: column;
     gap: 10px;
     justify-content: space-between;
+    min-width: 0;
 }
 .preview-box {
     flex: 1.2;
@@ -504,6 +514,7 @@ body > .header {
     font-weight: 500;
     font-size: 0.95rem;
     overflow: hidden; /* To contain the image */
+    box-sizing: border-box;
 }
 .preview-box img {
     display: none; /* Hidden by default */
@@ -1799,11 +1810,31 @@ pre {
 
 /* Responsive adjustment */
 @media (max-width: 900px) {
+    /* Remove side padding on mobile for full-width layout */
+    body > *:not(.navbar) {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    
+    body > .main-grid {
+        padding-top: 12px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    
     .main-grid {
         grid-template-columns: 1fr;
+        gap: 15px;
     }
+    
+    /* Card adjustments for mobile */
+    .card {
+        padding: 16px;
+    }
+    
     #upload-box {
         flex-direction: column;
+        gap: 15px;
     }
     
     /* Fix preview box and images for mobile */
@@ -1812,28 +1843,67 @@ pre {
         max-height: 250px;
         height: auto;
         width: 100%;
+        box-sizing: border-box;
     }
     
     .preview-box img {
         object-fit: contain;
         max-height: 250px;
+        width: 100%;
+        height: auto;
+    }
+    
+    /* Form elements on mobile */
+    .input-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .file-label,
+    .icon-btn {
+        width: 100%;
+        padding: 10px 16px;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn,
+    .btn-new {
+        width: 100%;
     }
     
     /* Fix result box images for mobile */
     .viz-container {
         flex-direction: column;
         gap: 12px;
+        width: 100%;
     }
     
     .viz-box {
         width: 100%;
         max-height: 300px;
         aspect-ratio: auto;
+        box-sizing: border-box;
     }
     
     .viz-box img {
         max-height: 300px;
         object-fit: contain;
+        width: 100%;
+    }
+    
+    /* Gemini box for mobile */
+    #gemini-box {
+        max-height: none;
+        min-height: 300px;
+    }
+    
+    .gemini-content {
+        max-height: 400px;
+        font-size: 0.9rem;
     }
     
     /* Fix camera modal for mobile */
@@ -1846,6 +1916,7 @@ pre {
         max-width: 100%;
         padding: 0;
         justify-content: center;
+        box-sizing: border-box;
     }
     
     #cameraVideo {
@@ -1855,6 +1926,7 @@ pre {
         height: auto;
         object-fit: cover;
         border-radius: var(--radius-sm);
+        box-sizing: border-box;
     }
     
     .camera-controls {
@@ -1864,6 +1936,7 @@ pre {
         flex-wrap: nowrap;
         gap: 10px;
         padding: 0 10px;
+        box-sizing: border-box;
     }
     
     .camera-btn {
@@ -1872,20 +1945,25 @@ pre {
         max-width: 140px;
         padding: 10px 15px;
         font-size: 0.9rem;
+        box-sizing: border-box;
     }
     
+    /* Navbar adjustments */
     .navbar {
-        padding: 12px 16px;
+        padding: 12px;
         position: relative;
     }
+    
     .navbar-logo img {
         height: 40px;
     }
+    
     .logo-text {
         font-size: 1.2rem;
     }
+    
     .navbar-links {
-        gap: 15px;
+        gap: 10px;
     }
     
     /* Hide desktop nav menu on mobile */
@@ -1901,6 +1979,77 @@ pre {
     .nav-link {
         font-size: 0.9rem;
         padding: 6px 12px;
+    }
+}
+
+/* Extra small screens (phones in portrait - 480px and below) */
+@media (max-width: 480px) {
+    body > *:not(.navbar) {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    
+    body > .main-grid {
+        padding: 8px;
+    }
+    
+    .card {
+        padding: 12px;
+        border-radius: var(--radius-sm);
+    }
+    
+    #upload-box {
+        gap: 12px;
+    }
+    
+    .preview-box {
+        min-height: 150px;
+        max-height: 200px;
+    }
+    
+    .preview-box img {
+        max-height: 200px;
+    }
+    
+    .file-label,
+    .icon-btn,
+    .btn,
+    .btn-new {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .navbar {
+        padding: 8px;
+    }
+    
+    .navbar-logo img {
+        height: 35px;
+    }
+    
+    .logo-text {
+        font-size: 1rem;
+    }
+    
+    .theme-toggle {
+        width: 36px;
+        height: 36px;
+    }
+    
+    #cameraVideo {
+        max-height: 50vh;
+    }
+    
+    .camera-btn {
+        min-width: 80px;
+        max-width: 120px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .gemini-content {
+        font-size: 0.85rem;
+        padding: 12px;
     }
 }
 
