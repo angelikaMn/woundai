@@ -435,8 +435,10 @@ body > .header {
 .content-container {
     height: calc(100vh - 82px); /* Full viewport - navbar */
     overflow-y: auto;
-    padding: 24px 24px 50px 24px; /* Bottom padding = 50px gap */
+    padding: 40px 24px 50px 24px; /* Top/bottom padding for centering + 50px gap */
     box-sizing: border-box;
+    display: flex;
+    align-items: center; /* Center vertically */
 }
 
 /* Custom scrollbar for content container */
@@ -671,8 +673,8 @@ input[type="file"] {
 
 /* --- 2. Result Box (Bottom-Left) --- */
 #result-box {
-    height: calc(100vh - 82px - 50px - 48px - 40px); /* Responsive: viewport - navbar - gap - padding - spacing */
-    max-height: calc((100vh - 82px - 50px - 48px - 40px) / 2); /* Responsive: (viewport - navbar - gap - padding - spacing) / 2 rows */
+    height: 100%;
+    max-height: 300px; /* Fixed max height */
     min-height: 250px; /* Minimum height */
     overflow-y: auto;
     overflow-x: hidden;
@@ -776,7 +778,8 @@ input[type="file"] {
 
 /* --- 3. Gemini Box (Right) --- */
 #gemini-box {
-    height: calc(100vh - 82px - 50px - 48px); /* Responsive: viewport - navbar - gap - padding */
+    height: 100%;
+    max-height: 100%; /* Use available space */
     display: flex;
     flex-direction: column;
     overflow: hidden; /* Prevent overflow from card */
@@ -2019,10 +2022,9 @@ pre {
     grid-template-columns: 1fr 1fr;
     gap: 25px;
     height: calc(100vh - 82px); /* Full viewport - navbar */
-    padding: 25px 25px 50px 25px; /* Bottom padding = 50px gap */
+    padding: 40px 25px 50px 25px; /* Top/bottom padding for centering + 50px gap */
     overflow: hidden;
     box-sizing: border-box;
-    max-height: 665px;
 }
 
 /* Left Section - Developers */
@@ -2036,7 +2038,7 @@ pre {
 
 .developers-card {
     height: 100%;
-    max-height: calc(100vh - 82px - 50px - 50px - 25px); /* Responsive: viewport - navbar - gap - padding - spacing */
+    max-height: 100%; /* Use available space */
     overflow-y: auto;
     overflow-x: hidden;
     display: flex;
@@ -2163,7 +2165,7 @@ pre {
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
-    max-height: calc(100vh - 82px - 50px - 50px - 25px - 150px); /* Responsive: viewport - navbar - gap - padding - spacing - project info */
+    max-height: 100%; /* Use available space */
     padding: 25px;
 }
 
