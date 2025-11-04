@@ -565,8 +565,8 @@ input[type="file"] {
 /* --- 2. Result Box (Bottom-Left) --- */
 #result-box {
     height: 100%;
-    max-height: 345px;
-    min-height: 345px; /* Ensure a minimum height */
+    max-height: 300px;
+    min-height: 290px; /* Ensure a minimum height */
     overflow-y: auto;
     overflow-x: hidden;
 }
