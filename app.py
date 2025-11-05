@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+# Load environment variables from .env file (local) or GCP Secret Manager (production)
+load_dotenv()
 from flask import (
     Flask,
     render_template,

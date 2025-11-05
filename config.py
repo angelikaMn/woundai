@@ -11,7 +11,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 # ---- Flask ----
-SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "change-this-in-production")
+SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "change-this-to-a-random-secret-key-in-production")
 
 # ---- Image / Model ----
 # EfficientNetB1 notebook uses 224x224 and 'top_conv' for Grad-CAM
@@ -29,7 +29,8 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 # ---- Gemini / Google AI ----
 # Google AI Studio API key (get yours from https://makersuite.google.com/app/apikey)
 # Valid model names: gemini-2.0-flash, gemini-1.5-flash, gemini-1.5-pro, gemini-pro-vision
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyDQHrlo0jwv30-XXaFIorq0pK40gGOIbr0")
+# IMPORTANT: Use environment variable to keep it secure!
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")  # Empty - add your key via environment variable
 GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-2.0-flash")
 
 # Control whether the model should be preloaded at app startup. Default to False

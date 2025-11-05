@@ -29,6 +29,7 @@ Thumbs.db
 
 # Flask environment
 .flaskenv
+.env
 
 # Flask static/uploads (optional - uncomment to ignore uploaded files)
 # uploads/
