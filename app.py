@@ -108,11 +108,16 @@ def send_contact_email(name, email, subject, message):
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
     sender_email = os.getenv("GMAIL_USER", "")  # Your Gmail address
-    sender_password = os.getenv("GMAIL_APP_PASSWORD", "")  # Gmail App Password
+    sender_password = os.getenv("GMAIL_APP_PASSWORD", "").replace(" ", "")  # Gmail App Password (remove spaces)
     recipient_email = "contact.woundai@gmail.com"  # Where to receive messages
     
     if not sender_email or not sender_password:
         raise Exception("Gmail credentials not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD in .env")
+    
+    print(f"📧 Attempting to send email...")
+    print(f"   From: {sender_email}")
+    print(f"   To: {recipient_email}")
+    print(f"   Subject: WoundAI Contact Form: {subject}")
     
     # Create message
     msg = MIMEMultipart("alternative")

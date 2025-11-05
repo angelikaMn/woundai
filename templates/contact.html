@@ -23,6 +23,49 @@
         <link rel="stylesheet" href="/static/styles.css" />
         <meta name="theme-color" content="#fef9f6" />
         <script src="/static/theme-toggle.js"></script>
+        
+        <!-- Toast Notification Styles -->
+        <style>
+            .toast {
+                visibility: hidden;
+                min-width: 250px;
+                background-color: #333;
+                color: #fff;
+                text-align: center;
+                border-radius: 8px;
+                padding: 16px;
+                position: fixed;
+                z-index: 9999;
+                left: 50%;
+                bottom: 30px;
+                transform: translateX(-50%);
+                font-size: 16px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            }
+
+            .toast.show {
+                visibility: visible;
+                animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            }
+
+            .toast.success {
+                background-color: #4caf50;
+            }
+
+            .toast.error {
+                background-color: #f44336;
+            }
+
+            @keyframes fadein {
+                from {bottom: 0; opacity: 0;}
+                to {bottom: 30px; opacity: 1;}
+            }
+
+            @keyframes fadeout {
+                from {bottom: 30px; opacity: 1;}
+                to {bottom: 0; opacity: 0;}
+            }
+        </style>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -253,15 +296,35 @@
                         </div>
 
                         <button type="submit" class="btn-submit">Kirim Pesan</button>
-
-                        {% if message_sent %}
-                        <div class="success-message">
-                            Terima kasih! Pesan Anda telah berhasil dikirim.
-                        </div>
-                        {% endif %}
                     </form>
                 </div>
             </div>
         </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+
+        <!-- Toast Script -->
+        <script>
+            // Show toast notification
+            function showToast(message, type) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.className = 'toast show ' + type;
+                
+                setTimeout(() => {
+                    toast.className = toast.className.replace('show', '');
+                }, 3000);
+            }
+
+            // Check for success/error messages from server
+            {% if message_sent %}
+            showToast('✅ Pesan berhasil dikirim!', 'success');
+            {% endif %}
+            
+            {% if error %}
+            showToast('❌ Gagal mengirim pesan. Silakan coba lagi.', 'error');
+            {% endif %}
+        </script>
     </body>
 </html>
