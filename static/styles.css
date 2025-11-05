@@ -2375,6 +2375,35 @@ pre {
     color: var(--color-text-secondary);
 }
 
+.github-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+}
+
+.github-link:hover {
+    color: var(--color-primary-hover);
+    transform: translateX(3px);
+}
+
+.github-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: var(--color-primary);
+    transition: width 0.3s ease;
+}
+
+.github-link:hover::after {
+    width: 100%;
+}
+
 /* Right Section */
 .contact-right {
     display: flex;
