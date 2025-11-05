@@ -18,6 +18,9 @@ from werkzeug.utils import secure_filename
 from utils import gemini_check_is_wound, ensure_dirs
 import json
 import time
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 import tensorflow as tf
 import config
@@ -81,17 +84,84 @@ def contact():
         subject = request.form.get("subject")
         message = request.form.get("message")
 
-        # Here you could add logic to send emails, store in database, etc.
-        # For now, we'll just acknowledge the submission
-        print(f"Contact form submitted:")
-        print(f"  Name: {name}")
-        print(f"  Email: {email}")
-        print(f"  Subject: {subject}")
-        print(f"  Message: {message}")
+        # Send email
+        try:
+            send_contact_email(name, email, subject, message)
+            print(f"✅ Contact form submitted and email sent:")
+            print(f"  Name: {name}")
+            print(f"  Email: {email}")
+            print(f"  Subject: {subject}")
+            return render_template("contact.html", message_sent=True, error=False)
+        except Exception as e:
+            print(f"❌ Failed to send email: {e}")
+            return render_template("contact.html", message_sent=False, error=True)
 
-        return render_template("contact.html", message_sent=True)
+    return render_template("contact.html", message_sent=False, error=False)
 
-    return render_template("contact.html", message_sent=False)
+
+def send_contact_email(name, email, subject, message):
+    """
+    Send contact form submission to woundai@gmail.com via Gmail SMTP
+    Requires GMAIL_USER and GMAIL_APP_PASSWORD in environment variables
+    """
+    # Gmail SMTP settings
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+    sender_email = os.getenv("GMAIL_USER", "")  # Your Gmail address
+    sender_password = os.getenv("GMAIL_APP_PASSWORD", "")  # Gmail App Password
+    recipient_email = "contact.woundai@gmail.com"  # Where to receive messages
+    
+    if not sender_email or not sender_password:
+        raise Exception("Gmail credentials not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD in .env")
+    
+    # Create message
+    msg = MIMEMultipart("alternative")
+    msg["From"] = sender_email
+    msg["To"] = recipient_email
+    msg["Subject"] = f"WoundAI Contact Form: {subject}"
+    
+    # Email body (HTML)
+    html_body = f"""
+    <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+                <h2 style="color: #e8b4b4; border-bottom: 2px solid #e8b4b4; padding-bottom: 10px;">
+                    New Contact Form Submission
+                </h2>
+                
+                <div style="background: #f7f1de; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                    <p style="margin: 5px 0;"><strong>Name:</strong> {name}</p>
+                    <p style="margin: 5px 0;"><strong>Email:</strong> {email}</p>
+                    <p style="margin: 5px 0;"><strong>Subject:</strong> {subject}</p>
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <h3 style="color: #555; margin-bottom: 10px;">Message:</h3>
+                    <p style="background: #fff; padding: 15px; border-left: 4px solid #e8b4b4; margin: 0;">
+                        {message}
+                    </p>
+                </div>
+                
+                <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+                
+                <p style="color: #888; font-size: 0.9em; margin: 0;">
+                    This message was sent from the WoundAI contact form.
+                </p>
+            </div>
+        </body>
+    </html>
+    """
+    
+    # Attach HTML body
+    msg.attach(MIMEText(html_body, "html"))
+    
+    # Send email
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()  # Secure connection
+        server.login(sender_email, sender_password)
+        server.send_message(msg)
+    
+    print(f"📧 Email sent successfully to {recipient_email}")
 
 
 @app.route("/triage", methods=["POST"])
