@@ -2209,6 +2209,22 @@ pre {
     box-sizing: border-box;
 }
 
+@media (max-width: 1400px) {
+    .contact-container {
+        padding: 30px 20px 40px 20px;
+        gap: 20px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .contact-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow-y: auto;
+        padding: 20px 15px;
+    }
+}
+
 /* Left Section - Developers */
 .contact-left {
     display: flex;
@@ -2227,6 +2243,13 @@ pre {
     flex-direction: column;
     gap: 25px;
     padding: 25px;
+}
+
+@media (max-width: 1400px) {
+    .developers-card {
+        padding: 20px;
+        gap: 20px;
+    }
 }
 
 /* Final Developers Grid - Single Column Vertical Layout */
@@ -2318,7 +2341,7 @@ pre {
 
 .team-photo {
     width: 100%;
-    height: 180px;
+    height: 250px;
     border-radius: var(--radius-sm);
     overflow: hidden;
     background: var(--color-bg-tertiary);
@@ -2414,6 +2437,12 @@ pre {
     padding: 25px;
 }
 
+@media (max-width: 1400px) {
+    .contact-form-card {
+        padding: 20px;
+    }
+}
+
 .contact-form-card h3 {
     color: var(--color-success-dark);
     font-size: 1.2rem;
@@ -2431,6 +2460,12 @@ pre {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
+}
+
+@media (max-width: 1200px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 .form-group-compact {
@@ -2557,7 +2592,7 @@ pre {
     }
 
     .team-photo {
-        height: 150px;
+        height: 200px;
     }
 
     .team-info p {
