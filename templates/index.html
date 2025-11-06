@@ -5,11 +5,7 @@
         <title>WoundAi</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#fef9f6" />
-        <link
-            rel="icon"
-            href="/static/wound.png"
-            type="image/x-icon"
-        />
+        <link rel="icon" href="/static/wound.png" type="image/x-icon" />
         <link
             rel="shortcut icon"
             href="/static/wound.png"
@@ -70,22 +66,26 @@
                         </svg>
                     </span>
                 </button>
-                
+
                 <!-- Desktop Navigation Links -->
                 <div class="nav-menu">
                     <a href="/" class="nav-link active">Home</a>
                     <a href="/about" class="nav-link">About</a>
                     <a href="/contact" class="nav-link">Contact</a>
                 </div>
-                
+
                 <!-- Mobile Hamburger Menu Button -->
-                <button class="hamburger-menu" id="hamburgerBtn" aria-label="Toggle menu">
+                <button
+                    class="hamburger-menu"
+                    id="hamburgerBtn"
+                    aria-label="Toggle menu"
+                >
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
             </div>
-            
+
             <!-- Mobile Menu Dropdown -->
             <div class="mobile-menu" id="mobileMenu">
                 <a href="/" class="mobile-nav-link active">Home</a>
@@ -138,8 +138,20 @@
                     <!-- Deskripsi Sistem -->
                     <section class="modal-section">
                         <h3>
-                            <svg class="section-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            <svg
+                                class="section-icon"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path
+                                    d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
+                                ></path>
                                 <polyline points="14 2 14 8 20 8"></polyline>
                                 <line x1="16" y1="13" x2="8" y2="13"></line>
                                 <line x1="16" y1="17" x2="8" y2="17"></line>
@@ -148,34 +160,53 @@
                             Tentang Sistem
                         </h3>
                         <p>
-                            WoundAI adalah aplikasi AI medis yang secara otomatis mendeteksi, 
-                            mengklasifikasikan, dan memberikan rekomendasi perawatan untuk berbagai 
-                            jenis luka. Didukung oleh model deep learning EfficientNetB1 dan 
-                            Google Gemini AI, kami memberikan klasifikasi luka yang akurat dengan 
-                            visualisasi AI yang dapat dijelaskan.
+                            WoundAI adalah website berbasis AI yang secara
+                            otomatis mengklasifikasikan, danmemberikan saran
+                            penanganan untuk berbagai jenis luka. Didukung oleh
+                            model arsitektur CNN EfficientNetB1 dan Google
+                            Gemini AI, kami memberikan klasifikasi luka yang
+                            akurat dengan visualisasi AI yang dapat dijelaskan.
                         </p>
                     </section>
 
                     <!-- Tutorial Section -->
                     <section class="modal-section">
                         <h3>
-                            <svg class="section-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg
+                                class="section-icon"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
                                 <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <path
+                                    d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+                                ></path>
                                 <line x1="12" y1="17" x2="12.01" y2="17"></line>
                             </svg>
                             Cara Menggunakan
                         </h3>
-                        
+
                         <!-- Langkah 1 -->
                         <div class="tutorial-step">
                             <h4>Langkah 1: Unggah Gambar Luka</h4>
                             <p>
-                                LLM akan memvalidasi apakah gambar yang diunggah mengandung luka pada kulit atau tidak. 
-                                Anda dapat mengunggah gambar melalui <strong>File</strong> atau langsung dari <strong>Kamera</strong>.
+                                LLM akan memvalidasi apakah gambar yang diunggah
+                                mengandung luka pada kulit atau tidak. Anda
+                                dapat mengunggah gambar melalui
+                                <strong>File</strong> atau langsung dari
+                                <strong>Kamera</strong>.
                             </p>
                             <div class="tutorial-image">
-                                <img src="/static/1.png" alt="Tutorial Upload" />
+                                <img
+                                    src="/static/1.png"
+                                    alt="Tutorial Upload"
+                                />
                             </div>
                         </div>
 
@@ -183,11 +214,16 @@
                         <div class="tutorial-step">
                             <h4>Langkah 2: Hasil Prediksi</h4>
                             <p>
-                                Hasil prediksi gambar akan ditampilkan di sini beserta gambar <strong>Grad-CAM</strong> 
-                                dan <strong>Overlay</strong>, serta jenis luka hasil prediksi model.
+                                Hasil prediksi gambar akan ditampilkan di sini
+                                beserta gambar <strong>Grad-CAM</strong> dan
+                                <strong>Overlay</strong>, serta jenis luka hasil
+                                prediksi model.
                             </p>
                             <div class="tutorial-image">
-                                <img src="/static/2.png" alt="Tutorial Result" />
+                                <img
+                                    src="/static/2.png"
+                                    alt="Tutorial Result"
+                                />
                             </div>
                         </div>
 
@@ -195,11 +231,15 @@
                         <div class="tutorial-step">
                             <h4>Langkah 3: Rekomendasi Penanganan</h4>
                             <p>
-                                Section ini menampilkan cara untuk menangani dan merawat luka yang dihasilkan 
-                                oleh LLM berdasarkan jenis luka yang diprediksi model.
+                                Section ini menampilkan cara untuk menangani dan
+                                merawat luka yang dihasilkan oleh LLM
+                                berdasarkan jenis luka yang diprediksi model.
                             </p>
                             <div class="tutorial-image">
-                                <img src="/static/3.png" alt="Tutorial Gemini" />
+                                <img
+                                    src="/static/3.png"
+                                    alt="Tutorial Gemini"
+                                />
                             </div>
                         </div>
                     </section>
@@ -207,18 +247,33 @@
                     <!-- Informasi Platform -->
                     <section class="modal-section modal-info-section">
                         <p>
-                            <svg class="inline-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg
+                                class="inline-icon"
+                                width="18"
+                                height="18"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
-                            <strong>Tutorial ini berlaku untuk platform Web dan Mobile</strong>
+                            <strong
+                                >Tutorial ini berlaku untuk platform Web dan
+                                Mobile</strong
+                            >
                         </p>
                     </section>
 
                     <!-- Note -->
                     <section class="modal-section modal-footer-section">
                         <p>
-                            <strong>Catatan:</strong> Alat ini dirancang untuk membantu tenaga 
-                            kesehatan profesional dan tidak boleh menggantikan nasihat medis profesional.
+                            <strong>Catatan:</strong> Alat ini dirancang untuk
+                            membantu masyarakat dalam melakukan penanganan luka
+                            secara mandiri, serta sebagai alat pendukung bagi
+                            tenaga medis.
                         </p>
                     </section>
                 </div>
@@ -736,25 +791,25 @@
                 console.log('[runTriage] Starting Gemini validation...');
                 inlineSpinner.classList.add('active');
                 fileNameDisplay.textContent = 'Validating with Gemini AI...';
-                
+
                 try {
                   const fd = new FormData();
                   fd.append('image', file, file.name);
                   const resp = await fetch('/triage', { method: 'POST', body: fd });
-                  
+
                   if (!resp.ok) {
                     console.warn('[runTriage] Triage request failed', resp.status);
                     uploadForm.dataset.triage = 'true';
                     fileNameDisplay.textContent = file.name;
                     return;
                   }
-                  
+
                   const j = await resp.json();
                   console.log('[runTriage] Gemini response:', j);
-                  
+
                   uploadForm.dataset.triage = j.is_wound ? 'true' : 'false';
                   uploadForm.dataset.triage_msg = j.message || '';
-                  
+
                   if (!j.is_wound) {
                     // Show a quick user-facing message and keep preview
                     console.log('[runTriage] ✗ Image rejected - not a wound');
@@ -855,7 +910,7 @@
               window.addEventListener('DOMContentLoaded', function() {
                 // Check for dev mode in URL
                 const urlParams = new URLSearchParams(window.location.search);
-                const isDevMode = urlParams.get('dev') === 'true';
+                const isDevMode = urlParams.get('dev')?.toLowerCase() === 'true';
 
                 // Check if user has seen the modal before
                 const hasSeenWelcome = localStorage.getItem(WELCOME_MODAL_KEY);
