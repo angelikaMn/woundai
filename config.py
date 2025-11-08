@@ -38,4 +38,17 @@ GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", "gemini-2.0-flash")
 PRELOAD_MODEL = os.getenv("PRELOAD_MODEL", "false").lower() in ("1", "true", "yes")
 
 # Enforce TensorFlow version per your spec
+
 REQUIRED_TF = "2.19.0"
+
+
+
+# ---- Email ----
+
+# Gmail credentials for contact form (use App Password)
+
+GMAIL_USER = os.getenv("GMAIL_USER", "")
+
+GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "")
+
+CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", "contact.woundai@gmail.com")

@@ -101,18 +101,19 @@ def contact():
 
 def send_contact_email(name, email, subject, message):
     """
-    Send contact form submission to woundai@gmail.com via Gmail SMTP
-    Requires GMAIL_USER and GMAIL_APP_PASSWORD in environment variables
+    Send contact form submission via Gmail SMTP.
+    Requires GMAIL_USER and GMAIL_APP_PASSWORD in environment variables,
+    which are loaded into the config.
     """
-    # Gmail SMTP settings
+    # Gmail SMTP settings from config
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
-    sender_email = os.getenv("GMAIL_USER", "")  # Your Gmail address
-    sender_password = os.getenv("GMAIL_APP_PASSWORD", "").replace(" ", "")  # Gmail App Password (remove spaces)
-    recipient_email = "contact.woundai@gmail.com"  # Where to receive messages
+    sender_email = config.GMAIL_USER
+    sender_password = config.GMAIL_APP_PASSWORD
+    recipient_email = config.CONTACT_EMAIL
     
     if not sender_email or not sender_password:
-        raise Exception("Gmail credentials not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD in .env")
+        raise Exception("Gmail credentials not configured. Set GMAIL_USER and GMAIL_APP_PASSWORD.")
     
     print(f"📧 Attempting to send email...")
     print(f"   From: {sender_email}")
