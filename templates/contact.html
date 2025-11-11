@@ -4,11 +4,7 @@
         <meta charset="utf-8" />
         <title>Contact - WoundAi</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link
-            rel="icon"
-            href="/static/wound.png"
-            type="image/x-icon"
-        />
+        <link rel="icon" href="/static/wound.png" type="image/x-icon" />
         <link
             rel="shortcut icon"
             href="/static/wound.png"
@@ -23,7 +19,7 @@
         <link rel="stylesheet" href="/static/styles.css" />
         <meta name="theme-color" content="#fef9f6" />
         <script src="/static/theme-toggle.js"></script>
-        
+
         <!-- Toast Notification Styles -->
         <style>
             .toast {
@@ -40,12 +36,14 @@
                 bottom: 30px;
                 transform: translateX(-50%);
                 font-size: 16px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             }
 
             .toast.show {
                 visibility: visible;
-                animation: fadein 0.5s, fadeout 0.5s 2.5s;
+                animation:
+                    fadein 0.5s,
+                    fadeout 0.5s 2.5s;
             }
 
             .toast.success {
@@ -57,13 +55,25 @@
             }
 
             @keyframes fadein {
-                from {bottom: 0; opacity: 0;}
-                to {bottom: 30px; opacity: 1;}
+                from {
+                    bottom: 0;
+                    opacity: 0;
+                }
+                to {
+                    bottom: 30px;
+                    opacity: 1;
+                }
             }
 
             @keyframes fadeout {
-                from {bottom: 30px; opacity: 1;}
-                to {bottom: 0; opacity: 0;}
+                from {
+                    bottom: 30px;
+                    opacity: 1;
+                }
+                to {
+                    bottom: 0;
+                    opacity: 0;
+                }
             }
         </style>
     </head>
@@ -113,22 +123,26 @@
                         </svg>
                     </span>
                 </button>
-                
+
                 <!-- Desktop Navigation Links -->
                 <div class="nav-menu">
                     <a href="/" class="nav-link">Home</a>
                     <a href="/about" class="nav-link">About</a>
                     <a href="/contact" class="nav-link active">Contact</a>
                 </div>
-                
+
                 <!-- Mobile Hamburger Menu Button -->
-                <button class="hamburger-menu" id="hamburgerBtn" aria-label="Toggle menu">
+                <button
+                    class="hamburger-menu"
+                    id="hamburgerBtn"
+                    aria-label="Toggle menu"
+                >
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
             </div>
-            
+
             <!-- Mobile Menu Dropdown -->
             <div class="mobile-menu" id="mobileMenu">
                 <a href="/" class="mobile-nav-link">Home</a>
@@ -136,29 +150,32 @@
                 <a href="/contact" class="mobile-nav-link active">Contact</a>
             </div>
         </nav>
-        
+
         <script>
             // Hamburger Menu Functionality
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-            const mobileMenu = document.getElementById('mobileMenu');
+            const hamburgerBtn = document.getElementById("hamburgerBtn");
+            const mobileMenu = document.getElementById("mobileMenu");
 
-            hamburgerBtn.addEventListener('click', function() {
-              hamburgerBtn.classList.toggle('active');
-              mobileMenu.classList.toggle('active');
+            hamburgerBtn.addEventListener("click", function () {
+                hamburgerBtn.classList.toggle("active");
+                mobileMenu.classList.toggle("active");
             });
 
-            document.addEventListener('click', function(e) {
-              if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
-                hamburgerBtn.classList.remove('active');
-                mobileMenu.classList.remove('active');
-              }
+            document.addEventListener("click", function (e) {
+                if (
+                    !hamburgerBtn.contains(e.target) &&
+                    !mobileMenu.contains(e.target)
+                ) {
+                    hamburgerBtn.classList.remove("active");
+                    mobileMenu.classList.remove("active");
+                }
             });
 
-            document.querySelectorAll('.mobile-nav-link').forEach(link => {
-              link.addEventListener('click', function() {
-                hamburgerBtn.classList.remove('active');
-                mobileMenu.classList.remove('active');
-              });
+            document.querySelectorAll(".mobile-nav-link").forEach((link) => {
+                link.addEventListener("click", function () {
+                    hamburgerBtn.classList.remove("active");
+                    mobileMenu.classList.remove("active");
+                });
             });
         </script>
 
@@ -173,30 +190,59 @@
                         <!-- Developer Card 1 -->
                         <div class="team-card">
                             <div class="team-photo">
-                                <img src="/static/angel.jpg" alt="Developer 1" />
-                            </div>v
+                                <img
+                                    src="/static/angel.jpg"
+                                    alt="Developer 1"
+                                />
+                            </div>
                             <div class="team-info">
                                 <p><strong>Name:</strong> Angelika Manoppo</p>
-                                <p><strong>Email:</strong> angelikamanoppo02@gmail.com</p>
-                                <p><strong>Github:</strong> <a href="https://github.com/angelikaMn" target="_blank" class="github-link">@angelikaMn</a></p>
+                                <p>
+                                    <strong>Email:</strong>
+                                    angelikamanoppo02@gmail.com
+                                </p>
+                                <p>
+                                    <strong>Github:</strong>
+                                    <a
+                                        href="https://github.com/angelikaMn"
+                                        target="_blank"
+                                        class="github-link"
+                                        >@angelikaMn</a
+                                    >
+                                </p>
                             </div>
                         </div>
 
                         <!-- Developer Card 2 -->
                         <div class="team-card">
                             <div class="team-photo">
-                                <img src="/static/avril.jpg" alt="Developer 2" />
+                                <img
+                                    src="/static/avril.jpg"
+                                    alt="Developer 2"
+                                />
                             </div>
                             <div class="team-info">
                                 <p><strong>Name:</strong> Avrillia Kawonal</p>
-                                <p><strong>Email:</strong> akawonal@gmail.com</p>
-                                <p><strong>Github:</strong> <a href="https://github.com/AvriliaKawonal14" target="_blank" class="github-link">@AvriliaKawonal14</a></p>
+                                <p>
+                                    <strong>Email:</strong> akawonal@gmail.com
+                                </p>
+                                <p>
+                                    <strong>Github:</strong>
+                                    <a
+                                        href="https://github.com/AvriliaKawonal14"
+                                        target="_blank"
+                                        class="github-link"
+                                        >@AvriliaKawonal14</a
+                                    >
+                                </p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Advisors Section (in same box) -->
-                    <h3 class="section-title" style="margin-top: 30px;">Advisors:</h3>
+                    <h3 class="section-title" style="margin-top: 30px">
+                        Advisors:
+                    </h3>
                     <div class="team-grid">
                         <!-- Advisor Card 1 -->
                         <div class="team-card">
@@ -204,8 +250,13 @@
                                 <img src="/static/avatar.jpg" alt="Advisor 1" />
                             </div>
                             <div class="team-info">
-                                <p><strong>Name:</strong> George M. W. Tangka, S.Kom., MBA</p>
-                                <p><strong>Email:</strong> gtangka@unklab.ac.id</p>
+                                <p>
+                                    <strong>Name:</strong> George M. W. Tangka,
+                                    S.Kom., MBA
+                                </p>
+                                <p>
+                                    <strong>Email:</strong> gtangka@unklab.ac.id
+                                </p>
                             </div>
                         </div>
 
@@ -215,24 +266,39 @@
                                 <img src="/static/avatar.jpg" alt="Advisor 2" />
                             </div>
                             <div class="team-info">
-                                <p><strong>Name:</strong> Green A. Sandag, S.Kom., M.S.</p>
-                                <p><strong>Email:</strong> greensandag@unklab.ac.id</p>
+                                <p>
+                                    <strong>Name:</strong> Green A. Sandag,
+                                    S.Kom., M.S.
+                                </p>
+                                <p>
+                                    <strong>Email:</strong>
+                                    greensandag@unklab.ac.id
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-
             <!-- Right Section -->
             <div class="contact-right">
                 <!-- Project Information -->
                 <div class="card project-info-card">
                     <div class="project-header">
-                        <img src="/static/wound.png" alt="WoundAI Logo" class="project-logo" />
+                        <img
+                            src="/static/wound.png"
+                            alt="WoundAI Logo"
+                            class="project-logo"
+                        />
                         <div class="project-brief">
                             <p>
-                                Terima kasih telah menggunakan WoundAI! Kami adalah tim developer yang bersemangat menciptakan solusi kesehatan berbasis AI yang mudah digunakan. Setiap fitur dirancang dengan cermat untuk membantu Anda mendapatkan informasi perawatan luka yang cepat dan akurat. Saran dan feedback Anda sangat berarti bagi kami!
+                                Terima kasih telah menggunakan WoundAI! Kami
+                                adalah tim developer yang bersemangat
+                                menciptakan solusi kesehatan berbasis AI yang
+                                mudah digunakan. Setiap fitur dirancang dengan
+                                cermat untuk membantu Anda mendapatkan informasi
+                                perawatan luka yang cepat dan akurat. Saran dan
+                                feedback Anda sangat berarti bagi kami!
                             </p>
                             <div class="project-tech">
                                 <span class="tech-badge">Flask</span>
@@ -247,7 +313,11 @@
                 <!-- Contact Form -->
                 <div class="card contact-form-card">
                     <h3>Hubungi Kami</h3>
-                    <form class="contact-form-compact" method="POST" action="/contact">
+                    <form
+                        class="contact-form-compact"
+                        method="POST"
+                        action="/contact"
+                    >
                         <div class="form-row">
                             <div class="form-group-compact">
                                 <label for="name">Nama</label>
@@ -293,7 +363,9 @@
                             ></textarea>
                         </div>
 
-                        <button type="submit" class="btn-submit">Kirim Pesan</button>
+                        <button type="submit" class="btn-submit">
+                            Kirim Pesan
+                        </button>
                     </form>
                 </div>
             </div>
@@ -309,7 +381,7 @@
                 const toast = document.getElementById('toast');
                 toast.textContent = message;
                 toast.className = 'toast show ' + type;
-                
+
                 setTimeout(() => {
                     toast.className = toast.className.replace('show', '');
                 }, 3000);
@@ -319,7 +391,7 @@
             {% if message_sent %}
             showToast('✅ Pesan berhasil dikirim!', 'success');
             {% endif %}
-            
+
             {% if error %}
             showToast('❌ Gagal mengirim pesan. Silakan coba lagi.', 'error');
             {% endif %}
