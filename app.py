@@ -38,27 +38,40 @@ app.config["UPLOAD_FOLDER"] = config.UPLOAD_FOLDER
 # expose config in templates (footer info)
 app.jinja_env.globals.update(config=config)
 
+import logging
+import sys
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
+
 # Version note
 if tf.__version__ != config.REQUIRED_TF:
-    print(f"[WARN] TensorFlow {config.REQUIRED_TF} required; found {tf.__version__}.")
+    logger.warning(f"TensorFlow {config.REQUIRED_TF} required; found {tf.__version__}.")
 
 # ⚡ PRELOAD MODEL AT STARTUP - This makes first prediction MUCH faster!
 if getattr(config, "PRELOAD_MODEL", False):
-    print("=" * 60)
-    print("🔥 Preloading model at startup...")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("🔥 Preloading model at startup...")
+    logger.info("=" * 60)
     try:
         model = get_model()
-        print(f"✅ Model loaded successfully!")
-        print(f"   Input shape: {model.input_shape}")
-        print(f"   Output shape: {model.output_shape}")
-        print(f"   Total params: {model.count_params():,}")
-        print("=" * 60)
+        logger.info(f"✅ Model loaded successfully!")
+        logger.info(f"   Input shape: {model.input_shape}")
+        logger.info(f"   Output shape: {model.output_shape}")
+        logger.info(f"   Total params: {model.count_params():,}")
+        logger.info("=" * 60)
     except Exception as e:
-        print(f"❌ Failed to preload model: {e}")
-        print("=" * 60)
+        logger.error(f"❌ Failed to preload model: {e}")
+        logger.info("=" * 60)
 else:
-    print(
+    logger.info(
         "Model preload disabled (PRELOAD_MODEL=False). Will run Gemini triage before loading model."
     )
 
@@ -87,13 +100,13 @@ def contact():
         # Send email
         try:
             send_contact_email(name, email, subject, message)
-            print(f"✅ Contact form submitted and email sent:")
-            print(f"  Name: {name}")
-            print(f"  Email: {email}")
-            print(f"  Subject: {subject}")
+            logger.info(f"✅ Contact form submitted and email sent:")
+            logger.info(f"  Name: {name}")
+            logger.info(f"  Email: {email}")
+            logger.info(f"  Subject: {subject}")
             return render_template("contact.html", message_sent=True, error=False)
         except Exception as e:
-            print(f"❌ Failed to send email: {e}")
+            logger.error(f"❌ Failed to send email: {e}")
             return render_template("contact.html", message_sent=False, error=True)
 
     return render_template("contact.html", message_sent=False, error=False)
@@ -167,7 +180,7 @@ def send_contact_email(name, email, subject, message):
         server.login(sender_email, sender_password)
         server.send_message(msg)
     
-    print(f"📧 Email sent successfully to {recipient_email}")
+    logger.info(f"📧 Email sent successfully to {recipient_email}")
 
 
 @app.route("/triage", methods=["POST"])
@@ -228,7 +241,7 @@ def analyze():
     result["elapsed_human"] = f"{elapsed:.2f}s"
 
     # Print a clear terminal message when the entire pipeline completes
-    print(
+    logger.info(
         """
 ------------------------------------------------------------
 ✅ ANALYZE PIPELINE FINISHED

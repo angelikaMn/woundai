@@ -17,6 +17,9 @@ from tensorflow.keras.preprocessing import image as kimage
 from tensorflow.keras.applications.efficientnet import preprocess_input
 import google.generativeai as genai
 import config
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # ---------------- helpers ----------------
@@ -95,7 +98,7 @@ def get_model():
     """
     global _model_cache, _input_size_cache
     if _model_cache is not None:
-        print("✓ Using cached model (fast path)")
+        logger.info("✓ Using cached model (fast path)")
         return _model_cache
 
     try:
@@ -105,7 +108,7 @@ def get_model():
             num_classes = len(config.CLASS_NAMES)
             m = build_model_architecture(num_classes=num_classes)
             m.load_weights(config.MODEL_PATH)
-            print("✓ Model weights loaded successfully!")
+            logger.info("✓ Model weights loaded successfully!")
         else:
             # Try to load full model (legacy path)
             m = load_model(config.MODEL_PATH, compile=False)
@@ -133,10 +136,10 @@ def get_model():
 
     # ⚡ OPTIMIZATION: Run a dummy prediction to warm up the model
     # This compiles TensorFlow graph and makes subsequent predictions faster
-    print("🔥 Warming up model with dummy prediction...")
+    logger.info("🔥 Warming up model with dummy prediction...")
     dummy_input = np.random.rand(1, H, W, C).astype(np.float32)
     _ = m.predict(dummy_input, verbose=0)
-    print("✓ Model warmed up!")
+    logger.info("✓ Model warmed up!")
 
     _model_cache = m
     return _model_cache
@@ -292,7 +295,7 @@ def gemini_check_is_wound(image_path: str):
     """
     model = _get_gemini()
     if model is None:
-        print("[gemini_check_is_wound] Gemini API key not configured; skipping wound check.")
+        logger.warning("[gemini_check_is_wound] Gemini API key not configured; skipping wound check.")
         return True, "Gemini API key not configured; skipping wound check."
 
     prompt = """Analyze this image and respond with ONLY ONE of these exact words:
@@ -307,47 +310,46 @@ Answer with just the single word."""
         from PIL import Image
         img = Image.open(image_path).convert("RGB")
         
-        print(f"[gemini_check_is_wound] Analyzing image: {image_path}")
+        logger.info(f"[gemini_check_is_wound] Analyzing image: {image_path}")
         
         # Generate content with image
         resp = model.generate_content([prompt, img])
         
         # Get response text
         if not resp or not hasattr(resp, 'text'):
-            print(f"[gemini_check_is_wound] Empty response from Gemini")
+            logger.warning(f"[gemini_check_is_wound] Empty response from Gemini")
             return True, "Gemini returned empty response; proceeding as wound."
         
         txt = (resp.text or "").strip().upper()
-        print(f"[gemini_check_is_wound] Raw Gemini response: {txt}")
+        logger.info(f"[gemini_check_is_wound] Raw Gemini response: {txt}")
         
         # Normalize and check whole-word patterns
         import re
         
         # Check for NORMAL_SKIN first (allow normal skin to proceed)
         if re.search(r"\bNORMAL[_\-\s]?SKIN\b", txt):
-            print(f"[gemini_check_is_wound] ✓ Detected NORMAL_SKIN")
+            logger.info(f"[gemini_check_is_wound] ✓ Detected NORMAL_SKIN")
             return True, "Normal skin detected - will classify as 'Normal' class"
         
         # Check negative: variants of NOT WOUND (reject non-skin images)
         if re.search(r"\bNOT[_\-\s]?WOUND\b", txt):
-            print(f"[gemini_check_is_wound] ✗ Detected NOT_WOUND")
+            logger.info(f"[gemini_check_is_wound] ✗ Detected NOT_WOUND")
             return False, "The uploaded image does not appear to be a wound or skin image. Please upload a valid wound image."
         
         # Then check positive 'WOUND' (but won't match 'NOT_WOUND' now)
         if re.search(r"\bWOUND\b", txt):
-            print(f"[gemini_check_is_wound] ✓ Detected WOUND")
+            logger.info(f"[gemini_check_is_wound] ✓ Detected WOUND")
             return True, "Wound image detected"
 
         # If the model reply is ambiguous or doesn't contain the expected tokens,
         # fall back to permissive behavior (allow processing)
-        print(f"[gemini_check_is_wound] ⚠ Ambiguous response: {txt}")
+        logger.warning(f"[gemini_check_is_wound] ⚠ Ambiguous response: {txt}")
         return True, f"Gemini response unclear ('{txt}'); proceeding as wound."
         
     except Exception as e:
         import traceback
         error_details = traceback.format_exc()
-        print(f"[gemini_check_is_wound] ✗ Error during Gemini check:")
-        print(error_details)
+        logger.error(f"[gemini_check_is_wound] ✗ Error during Gemini check:\n{error_details}")
         # Be permissive on error - allow processing to continue
         return True, f"Gemini check failed ({str(e)}); proceeding as wound."
 
@@ -385,8 +387,7 @@ penting: koreksi jika prediksi salah. lihat original path berikan maksud sebenar
     except Exception as e:
         import traceback
         error_details = traceback.format_exc()
-        print(f"[gemini_penanganan] Error:")
-        print(error_details)
+        logger.error(f"[gemini_penanganan] Error:\n{error_details}")
         return f"Analisis Gemini gagal: {e}"
 
 # --------------- Global progress tracking ---------------
@@ -396,7 +397,7 @@ def set_progress(message: str):
     """Set the current progress message"""
     global _current_progress
     _current_progress = message
-    print(message)
+    logger.info(message)
 
 def get_progress() -> str:
     """Get the current progress message"""
@@ -412,9 +413,9 @@ def handle_upload_and_process(file_storage) -> dict:
     - Grad-CAM + overlay
     - Gemini penanganan
     """
-    print("=" * 80)
-    print("🔍 STARTING PREDICTION PIPELINE")
-    print("=" * 80)
+    logger.info("=" * 80)
+    logger.info("🔍 STARTING PREDICTION PIPELINE")
+    logger.info("=" * 80)
 
     ensure_dirs()
 
@@ -425,35 +426,35 @@ def handle_upload_and_process(file_storage) -> dict:
     file_storage.save(saved_path)
     saved_path = saved_path.replace("\\", "/")
 
-    print(f"✓ Step 1/7: Image uploaded and saved")
-    print(f"  └─ File: {filename}")
-    print(f"  └─ Path: {saved_path}")
-    print()
+    logger.info(f"✓ Step 1/7: Image uploaded and saved")
+    logger.info(f"  └─ File: {filename}")
+    logger.info(f"  └─ Path: {saved_path}")
+    logger.info("")
 
     # LLM triage BEFORE loading the heavy model (fast-fail for non-wound images)
-    print("⏳ Step 2/7: Gemini validation (checking if image contains wound)...")
+    logger.info("⏳ Step 2/7: Gemini validation (checking if image contains wound)...")
     is_wound, msg = gemini_check_is_wound(saved_path)
     if not is_wound:
-        print(f"✗ Gemini validation failed: {msg}")
-        print("=" * 80)
+        logger.warning(f"✗ Gemini validation failed: {msg}")
+        logger.info("=" * 80)
         # Return quickly; no model load required
         return {"status": "not_wound", "message": msg, "input_image": saved_path}
-    print(f"✓ Step 2/7: Gemini validation passed - {msg}")
-    print()
+    logger.info(f"✓ Step 2/7: Gemini validation passed - {msg}")
+    logger.info("")
 
     # Load model (will raise if the saved file is malformed)
-    print("⏳ Step 3/7: Loading prediction model...")
+    logger.info("⏳ Step 3/7: Loading prediction model...")
     try:
         model = get_model()
-        print("✓ Step 3/7: Model loaded successfully")
-        print()
+        logger.info("✓ Step 3/7: Model loaded successfully")
+        logger.info("")
     except RuntimeError as e:
-        print(f"✗ Model loading failed: {e}")
-        print("=" * 80)
+        logger.error(f"✗ Model loading failed: {e}")
+        logger.info("=" * 80)
         return {"status": "error", "message": str(e)}
 
     # Preprocess & predict
-    print("⏳ Step 4/7: Predicting wound class...")
+    logger.info("⏳ Step 4/7: Predicting wound class...")
     xbatch, original_resized = load_image_for_model(saved_path)
     pred_idx, conf, probs = predict_image(model, xbatch)
     classes = load_class_names()
@@ -463,35 +464,35 @@ def handle_upload_and_process(file_storage) -> dict:
     # Log prediction with top-5 classes for verification
     topk_indices = np.argsort(probs)[::-1][:5]
     topk_str = ', '.join([f"{classes[i]}:{probs[i]*100:.2f}%" for i in topk_indices])
-    print(f"✓ Step 4/7: Class predicted - {pred_label} ({confidence_pct}%)")
-    print(f"  └─ Top 5 predictions: {topk_str}")
-    print()
+    logger.info(f"✓ Step 4/7: Class predicted - {pred_label} ({confidence_pct}%)")
+    logger.info(f"  └─ Top 5 predictions: {topk_str}")
+    logger.info("")
 
     # Grad-CAM
-    print("⏳ Step 5/7: Generating GradCAM heatmap...")
+    logger.info("⏳ Step 5/7: Generating GradCAM heatmap...")
     heatmap = make_gradcam_heatmap(model, xbatch, class_idx=pred_idx)
-    print("✓ Step 5/7: GradCAM heatmap generated")
-    print()
+    logger.info("✓ Step 5/7: GradCAM heatmap generated")
+    logger.info("")
 
-    print("⏳ Step 6/7: Generating overlay image...")
+    logger.info("⏳ Step 6/7: Generating overlay image...")
     heatmap_path, overlay_path = save_heatmap_and_overlay(saved_path, heatmap, alpha=0.35)
-    print("✓ Step 6/7: Overlay image generated")
-    print(f"  └─ Heatmap: {heatmap_path}")
-    print(f"  └─ Overlay: {overlay_path}")
-    print()
+    logger.info("✓ Step 6/7: Overlay image generated")
+    logger.info(f"  └─ Heatmap: {heatmap_path}")
+    logger.info(f"  └─ Overlay: {overlay_path}")
+    logger.info("")
 
     # Gemini penanganan
-    print("⏳ Step 7/7: Generating Gemini LLM analysis and treatment recommendations...")
+    logger.info("⏳ Step 7/7: Generating Gemini LLM analysis and treatment recommendations...")
     gemini_text = gemini_penanganan(pred_label, saved_path, heatmap_path, overlay_path)
     gemini_html = format_gemini_markdown(gemini_text)
-    print("✓ Step 7/7: Gemini LLM analysis completed")
-    print(f"  └─ Analysis length: {len(gemini_text)} characters")
-    print()
+    logger.info("✓ Step 7/7: Gemini LLM analysis completed")
+    logger.info(f"  └─ Analysis length: {len(gemini_text)} characters")
+    logger.info("")
 
-    print("=" * 80)
-    print("✅ PREDICTION PIPELINE COMPLETED SUCCESSFULLY")
-    print("=" * 80)
-    print()
+    logger.info("=" * 80)
+    logger.info("✅ PREDICTION PIPELINE COMPLETED SUCCESSFULLY")
+    logger.info("=" * 80)
+    logger.info("")
 
     return {
         "status": "ok",
@@ -516,9 +517,9 @@ def handle_upload_and_process_with_progress(file_storage, progress_callback=None
     - Grad-CAM + overlay
     - Gemini penanganan
     """
-    print("=" * 80)
-    print("🔍 STARTING PREDICTION PIPELINE")
-    print("=" * 80)
+    logger.info("=" * 80)
+    logger.info("🔍 STARTING PREDICTION PIPELINE")
+    logger.info("=" * 80)
 
     ensure_dirs()
 
@@ -529,29 +530,29 @@ def handle_upload_and_process_with_progress(file_storage, progress_callback=None
     file_storage.save(saved_path)
     saved_path = saved_path.replace("\\", "/")
 
-    print(f"✓ Step 1/5: Image uploaded and saved")
-    print(f"  └─ File: {filename}")
-    print(f"  └─ Path: {saved_path}")
-    print()
+    logger.info(f"✓ Step 1/5: Image uploaded and saved")
+    logger.info(f"  └─ File: {filename}")
+    logger.info(f"  └─ Path: {saved_path}")
+    logger.info("")
 
     # Skip Gemini validation here since it was already done during file upload
     # Load model (will raise if the saved file is malformed)
-    print("⏳ Step 2/5: Loading prediction model...")
+    logger.info("⏳ Step 2/5: Loading prediction model...")
     set_progress("Loading prediction model")
     if progress_callback:
         progress_callback("Loading prediction model")
 
     try:
         model = get_model()
-        print("✓ Step 2/5: Model loaded successfully")
-        print()
+        logger.info("✓ Step 2/5: Model loaded successfully")
+        logger.info("")
     except RuntimeError as e:
-        print(f"✗ Model loading failed: {e}")
-        print("=" * 80)
+        logger.error(f"✗ Model loading failed: {e}")
+        logger.info("=" * 80)
         return {"status": "error", "message": str(e)}
 
     # Preprocess & predict
-    print("⏳ Step 3/5: Predicting wound class...")
+    logger.info("⏳ Step 3/5: Predicting wound class...")
     set_progress("Predicting wound class")
     if progress_callback:
         progress_callback("Predicting wound class")
@@ -565,12 +566,12 @@ def handle_upload_and_process_with_progress(file_storage, progress_callback=None
     # Log prediction with top-5 classes for verification
     topk_indices = np.argsort(probs)[::-1][:5]
     topk_str = ', '.join([f"{classes[i]}:{probs[i]*100:.2f}%" for i in topk_indices])
-    print(f"✓ Step 3/5: Class predicted - {pred_label} ({confidence_pct}%)")
-    print(f"  └─ Top 5 predictions: {topk_str}")
-    print()
+    logger.info(f"✓ Step 3/5: Class predicted - {pred_label} ({confidence_pct}%)")
+    logger.info(f"  └─ Top 5 predictions: {topk_str}")
+    logger.info("")
 
     # Grad-CAM
-    print("⏳ Step 4/5: Generating GradCAM heatmap and overlay...")
+    logger.info("⏳ Step 4/5: Generating GradCAM heatmap and overlay...")
     set_progress("Generating GradCAM heatmap")
     if progress_callback:
         progress_callback("Generating GradCAM heatmap")
@@ -582,27 +583,27 @@ def handle_upload_and_process_with_progress(file_storage, progress_callback=None
         progress_callback("Generating overlay image")
 
     heatmap_path, overlay_path = save_heatmap_and_overlay(saved_path, heatmap, alpha=0.35)
-    print("✓ Step 4/5: GradCAM heatmap and overlay generated")
-    print(f"  └─ Heatmap: {heatmap_path}")
-    print(f"  └─ Overlay: {overlay_path}")
-    print()
+    logger.info("✓ Step 4/5: GradCAM heatmap and overlay generated")
+    logger.info(f"  └─ Heatmap: {heatmap_path}")
+    logger.info(f"  └─ Overlay: {overlay_path}")
+    logger.info("")
 
     # Gemini penanganan
-    print("⏳ Step 5/5: Generating Gemini LLM analysis and treatment recommendations...")
+    logger.info("⏳ Step 5/5: Generating Gemini LLM analysis and treatment recommendations...")
     set_progress("Generating Gemini LLM analysis")
     if progress_callback:
         progress_callback("Generating Gemini LLM analysis")
 
     gemini_text = gemini_penanganan(pred_label, saved_path, heatmap_path, overlay_path)
     gemini_html = format_gemini_markdown(gemini_text)
-    print("✓ Step 5/5: Gemini LLM analysis completed")
-    print(f"  └─ Analysis length: {len(gemini_text)} characters")
-    print()
+    logger.info("✓ Step 5/5: Gemini LLM analysis completed")
+    logger.info(f"  └─ Analysis length: {len(gemini_text)} characters")
+    logger.info("")
 
-    print("=" * 80)
-    print("✅ PREDICTION PIPELINE COMPLETED SUCCESSFULLY")
-    print("=" * 80)
-    print()
+    logger.info("=" * 80)
+    logger.info("✅ PREDICTION PIPELINE COMPLETED SUCCESSFULLY")
+    logger.info("=" * 80)
+    logger.info("")
 
     set_progress("")  # Clear progress
     if progress_callback:
