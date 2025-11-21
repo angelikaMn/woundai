@@ -69,9 +69,9 @@
 
                 <!-- Desktop Navigation Links -->
                 <div class="nav-menu">
-                    <a href="/" class="nav-link active">Home</a>
-                    <a href="/about" class="nav-link">About</a>
-                    <a href="/contact" class="nav-link">Contact</a>
+                    <a href="/" class="nav-link active">Beranda</a>
+                    <a href="/about" class="nav-link">Tentang</a>
+                    <a href="/contact" class="nav-link">Kontak</a>
                 </div>
 
                 <!-- Mobile Hamburger Menu Button -->
@@ -88,16 +88,16 @@
 
             <!-- Mobile Menu Dropdown -->
             <div class="mobile-menu" id="mobileMenu">
-                <a href="/" class="mobile-nav-link active">Home</a>
-                <a href="/about" class="mobile-nav-link">About</a>
-                <a href="/contact" class="mobile-nav-link">Contact</a>
+                <a href="/" class="mobile-nav-link active">Beranda</a>
+                <a href="/about" class="mobile-nav-link">Tentang</a>
+                <a href="/contact" class="mobile-nav-link">Kontak</a>
             </div>
         </nav>
 
         <!-- Loading Overlay -->
         <div class="loading-overlay" id="loadingOverlay">
             <div class="spinner"></div>
-            <div class="loading-text">Analyzing image</div>
+            <div class="loading-text">Menganalisa gambar</div>
             <div class="progress-text" id="progressText"></div>
         </div>
 
@@ -314,7 +314,7 @@
                             <button class="btn" type="submit" id="analyzeBtn">
                                 Analisis
                             </button>
-                            <a href="/" class="btn btn-new">New</a>
+                            <a href="/" class="btn btn-new">Baru</a>
                         </div>
 
                         <div class="file-info-row">
@@ -381,12 +381,14 @@
                                 src="{{ '/' + result.heatmap_image }}"
                                 alt="heatmap"
                             />
+                            <div class="viz-label">GradCAM</div>
                         </div>
                         <div class="viz-box" id="overlay-box">
                             <img
                                 src="{{ '/' + result.overlay_image }}"
                                 alt="overlay"
                             />
+                            <div class="viz-label">Overlay</div>
                         </div>
                     </div>
 
@@ -766,9 +768,11 @@
                     <div class="viz-container">
                       <div class="viz-box" id="gradcam-box">
                         <img src="/${result.heatmap_image}" alt="heatmap">
+                        <div class="viz-label">GradCAM</div>
                       </div>
                       <div class="viz-box" id="overlay-box">
                         <img src="/${result.overlay_image}" alt="overlay">
+                        <div class="viz-label">Overlay</div>
                       </div>
                     </div>
                   `;
@@ -813,13 +817,13 @@
                   if (!j.is_wound) {
                     // Show a quick user-facing message and keep preview
                     console.log('[runTriage] ✗ Image rejected - not a wound');
-                    showToast('warning', 'Image Verification Failed', j.message || 'The uploaded image does not appear to be a wound. Please upload a clear wound image.');
+                    showToast('warning', 'Verifikasi Gambar Gagal', j.message || 'Gambar yang diunggah tidak tampak seperti luka. Silakan unggah gambar luka yang jelas.');
                     analyzeBtn.disabled = true;
-                    fileNameDisplay.textContent = file.name + ' (not a wound)';
+                    fileNameDisplay.textContent = file.name + ' (bukan luka)';
                   } else {
                     console.log('[runTriage] ✓ Image validated - is a wound/skin');
                     analyzeBtn.disabled = false;
-                    fileNameDisplay.textContent = file.name + ' (validated)';
+                    fileNameDisplay.textContent = file.name + ' (telah divalidasi)';
                   }
                 } catch (err) {
                   console.error('[runTriage] Triage error', err);
