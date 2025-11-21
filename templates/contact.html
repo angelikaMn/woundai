@@ -1,400 +1,332 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>Contact - WoundAi</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/static/wound.png" type="image/x-icon" />
-        <link
-            rel="shortcut icon"
-            href="/static/wound.png"
-            type="image/x-icon"
-        />
-        <link
-            rel="icon"
-            href="/static/wound.png"
-            type="image/png"
-            sizes="32x32"
-        />
-        <link rel="stylesheet" href="/static/styles.css" />
-        <meta name="theme-color" content="#fef9f6" />
-        <script src="/static/theme-toggle.js"></script>
 
-        <!-- Toast Notification Styles -->
-        <style>
-            .toast {
-                visibility: hidden;
-                min-width: 250px;
-                background-color: #333;
-                color: #fff;
-                text-align: center;
-                border-radius: 8px;
-                padding: 16px;
-                position: fixed;
-                z-index: 9999;
-                left: 50%;
+<head>
+    <meta charset="utf-8" />
+    <title>Contact - WoundAi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/static/wound.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="/static/wound.png" type="image/x-icon" />
+    <link rel="icon" href="/static/wound.png" type="image/png" sizes="32x32" />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <meta name="theme-color" content="#fef9f6" />
+    <script src="/static/theme-toggle.js"></script>
+
+    <!-- Toast Notification Styles -->
+    <style>
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 9999;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast.show {
+            visibility: visible;
+            animation:
+                fadein 0.5s,
+                fadeout 0.5s 2.5s;
+        }
+
+        .toast.success {
+            background-color: #4caf50;
+        }
+
+        .toast.error {
+            background-color: #f44336;
+        }
+
+        @keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
                 bottom: 30px;
-                transform: translateX(-50%);
-                font-size: 16px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
             }
 
-            .toast.show {
-                visibility: visible;
-                animation:
-                    fadein 0.5s,
-                    fadeout 0.5s 2.5s;
+            to {
+                bottom: 0;
+                opacity: 0;
             }
+        }
+    </style>
+</head>
 
-            .toast.success {
-                background-color: #4caf50;
-            }
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-logo">
+            <a href="/" class="logo-link">
+                <img src="/static/wound.png" alt="WoundAI Logo" onerror="this.style.display='none'" />
+                <span class="logo-text">WoundAI</span>
+            </a>
+        </div>
+        <div class="navbar-links">
+            <!-- Theme Toggle Button (Always Visible) -->
+            <button class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme" tabindex="0">
+                <span class="theme-toggle-icon sun">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
+                    </svg>
+                </span>
+                <span class="theme-toggle-icon moon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </span>
+            </button>
 
-            .toast.error {
-                background-color: #f44336;
-            }
-
-            @keyframes fadein {
-                from {
-                    bottom: 0;
-                    opacity: 0;
-                }
-                to {
-                    bottom: 30px;
-                    opacity: 1;
-                }
-            }
-
-            @keyframes fadeout {
-                from {
-                    bottom: 30px;
-                    opacity: 1;
-                }
-                to {
-                    bottom: 0;
-                    opacity: 0;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <!-- Navigation Bar -->
-        <nav class="navbar">
-            <div class="navbar-logo">
-                <a href="/" class="logo-link">
-                    <img
-                        src="/static/wound.png"
-                        alt="WoundAI Logo"
-                        onerror="this.style.display='none'"
-                    />
-                    <span class="logo-text">WoundAI</span>
-                </a>
-            </div>
-            <div class="navbar-links">
-                <!-- Theme Toggle Button (Always Visible) -->
-                <button
-                    class="theme-toggle"
-                    aria-label="Toggle dark mode"
-                    title="Toggle theme"
-                    tabindex="0"
-                >
-                    <span class="theme-toggle-icon sun">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                        >
-                            <path
-                                d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"
-                            />
-                        </svg>
-                    </span>
-                    <span class="theme-toggle-icon moon">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                        >
-                            <path
-                                fill-rule="evenodd"
-                                d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
-                                clip-rule="evenodd"
-                            />
-                        </svg>
-                    </span>
-                </button>
-
-                <!-- Desktop Navigation Links -->
-                <div class="nav-menu">
-                    <a href="/" class="nav-link">Beranda</a>
-                    <a href="/about" class="nav-link">Tentang</a>
-                    <a href="/contact" class="nav-link active">Kontak</a>
-                </div>
-
-                <!-- Mobile Hamburger Menu Button -->
-                <button
-                    class="hamburger-menu"
-                    id="hamburgerBtn"
-                    aria-label="Toggle menu"
-                >
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
+            <!-- Desktop Navigation Links -->
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Beranda</a>
+                <a href="/about" class="nav-link">Tentang</a>
+                <a href="/contact" class="nav-link active">Kontak</a>
             </div>
 
-            <!-- Mobile Menu Dropdown -->
-            <div class="mobile-menu" id="mobileMenu">
-                <a href="/" class="mobile-nav-link">Beranda</a>
-                <a href="/about" class="mobile-nav-link">Tentang</a>
-                <a href="/contact" class="mobile-nav-link active">Kontak</a>
-            </div>
-        </nav>
+            <!-- Mobile Hamburger Menu Button -->
+            <button class="hamburger-menu" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
 
-        <script>
-            // Hamburger Menu Functionality
-            const hamburgerBtn = document.getElementById("hamburgerBtn");
-            const mobileMenu = document.getElementById("mobileMenu");
+        <!-- Mobile Menu Dropdown -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="/" class="mobile-nav-link">Beranda</a>
+            <a href="/about" class="mobile-nav-link">Tentang</a>
+            <a href="/contact" class="mobile-nav-link active">Kontak</a>
+        </div>
+    </nav>
 
-            hamburgerBtn.addEventListener("click", function () {
-                hamburgerBtn.classList.toggle("active");
-                mobileMenu.classList.toggle("active");
+    <script>
+        // Hamburger Menu Functionality
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
+
+        hamburgerBtn.addEventListener("click", function () {
+            hamburgerBtn.classList.toggle("active");
+            mobileMenu.classList.toggle("active");
+        });
+
+        document.addEventListener("click", function (e) {
+            if (
+                !hamburgerBtn.contains(e.target) &&
+                !mobileMenu.contains(e.target)
+            ) {
+                hamburgerBtn.classList.remove("active");
+                mobileMenu.classList.remove("active");
+            }
+        });
+
+        document.querySelectorAll(".mobile-nav-link").forEach((link) => {
+            link.addEventListener("click", function () {
+                hamburgerBtn.classList.remove("active");
+                mobileMenu.classList.remove("active");
             });
+        });
+    </script>
 
-            document.addEventListener("click", function (e) {
-                if (
-                    !hamburgerBtn.contains(e.target) &&
-                    !mobileMenu.contains(e.target)
-                ) {
-                    hamburgerBtn.classList.remove("active");
-                    mobileMenu.classList.remove("active");
-                }
-            });
-
-            document.querySelectorAll(".mobile-nav-link").forEach((link) => {
-                link.addEventListener("click", function () {
-                    hamburgerBtn.classList.remove("active");
-                    mobileMenu.classList.remove("active");
-                });
-            });
-        </script>
-
-        <!-- Contact Page Container -->
-        <div class="contact-container">
-            <!-- Left Section: Developers & Advisors in ONE scrollable box -->
-            <div class="contact-left">
-                <div class="card developers-card">
-                    <!-- Developers Section -->
-                    <h3 class="section-title">Pengembang:</h3>
-                    <div class="team-grid">
-                        <!-- Developer Card 1 -->
-                        <div class="team-card">
-                            <div class="team-photo">
-                                <img
-                                    src="/static/angel.jpg"
-                                    alt="Developer 1"
-                                />
-                            </div>
-                            <div class="team-info">
-                                <p><strong>Nama:</strong> Angelika Manoppo</p>
-                                <p>
-                                    <strong>Email:</strong>
-                                    angelikamanoppo02@gmail.com
-                                </p>
-                                <p>
-                                    <strong>Github:</strong>
-                                    <a
-                                        href="https://github.com/angelikaMn"
-                                        target="_blank"
-                                        class="github-link"
-                                        >@angelikaMn</a
-                                    >
-                                </p>
-                            </div>
+    <!-- Contact Page Container -->
+    <div class="contact-container">
+        <!-- Left Section: Developers & Advisors in ONE scrollable box -->
+        <div class="contact-left">
+            <div class="card developers-card">
+                <!-- Developers Section -->
+                <h3 class="section-title">Pengembang:</h3>
+                <div class="team-grid">
+                    <!-- Developer Card 1 -->
+                    <div class="team-card">
+                        <div class="team-photo">
+                            <img src="/static/angel.jpg" alt="Developer 1" />
                         </div>
-
-                        <!-- Developer Card 2 -->
-                        <div class="team-card">
-                            <div class="team-photo">
-                                <img
-                                    src="/static/avril.jpg"
-                                    alt="Developer 2"
-                                />
-                            </div>
-                            <div class="team-info">
-                                <p><strong>Nama:</strong> Avrillia Kawonal</p>
-                                <p>
-                                    <strong>Email:</strong> akawonal@gmail.com
-                                </p>
-                                <p>
-                                    <strong>Github:</strong>
-                                    <a
-                                        href="https://github.com/AvriliaKawonal14"
-                                        target="_blank"
-                                        class="github-link"
-                                        >@AvriliaKawonal14</a
-                                    >
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Advisors Section (in same box) -->
-                    <h3 class="section-title" style="margin-top: 30px">
-                        Pengawas:
-                    </h3>
-                    <div class="team-grid">
-                        <!-- Advisor Card 1 -->
-                        <div class="team-card">
-                            <div class="team-photo">
-                                <img src="/static/avatar.jpg" alt="Advisor 1" />
-                            </div>
-                            <div class="team-info">
-                                <p>
-                                    <strong>Nama:</strong> George M. W. Tangka,
-                                    S.Kom., MBA
-                                </p>
-                                <p>
-                                    <strong>Email:</strong> gtangka@unklab.ac.id
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Advisor Card 2 -->
-                        <div class="team-card">
-                            <div class="team-photo">
-                                <img src="/static/avatar.jpg" alt="Advisor 2" />
-                            </div>
-                            <div class="team-info">
-                                <p>
-                                    <strong>Nama:</strong> Green A. Sandag,
-                                    S.Kom., M.S.
-                                </p>
-                                <p>
-                                    <strong>Email:</strong>
-                                    greensandag@unklab.ac.id
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Section -->
-            <div class="contact-right">
-                <!-- Project Information -->
-                <div class="card project-info-card">
-                    <div class="project-header">
-                        <img
-                            src="/static/wound.png"
-                            alt="WoundAI Logo"
-                            class="project-logo"
-                        />
-                        <div class="project-brief">
+                        <div class="team-info">
+                            <p><strong>Nama:</strong> Angelika Manoppo</p>
                             <p>
-                                Terima kasih telah menggunakan WoundAI! Kami
-                                adalah tim developer yang bersemangat
-                                menciptakan solusi kesehatan berbasis AI yang
-                                mudah digunakan. Setiap fitur dirancang dengan
-                                cermat untuk membantu Anda mendapatkan informasi
-                                perawatan luka yang cepat. Saran dan feedback
-                                Anda sangat berarti bagi kami!
+                                <strong>Email:</strong>
+                                angelikamanoppo02@gmail.com
                             </p>
-                            <div class="project-tech">
-                                <span class="tech-badge">Flask</span>
-                                <span class="tech-badge">TensorFlow</span>
-                                <span class="tech-badge">Gemini AI</span>
-                                <span class="tech-badge">EfficientNetB1</span>
-                            </div>
+                            <p>
+                                <strong>Github:</strong>
+                                <a href="https://github.com/angelikaMn" target="_blank"
+                                    class="github-link">@angelikaMn</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Developer Card 2 -->
+                    <div class="team-card">
+                        <div class="team-photo">
+                            <img src="/static/avril.jpg" alt="Developer 2" />
+                        </div>
+                        <div class="team-info">
+                            <p><strong>Nama:</strong> Avrillia Kawonal</p>
+                            <p>
+                                <strong>Email:</strong> akawonal@gmail.com
+                            </p>
+                            <p>
+                                <strong>Github:</strong>
+                                <a href="https://github.com/AvriliaKawonal14" target="_blank"
+                                    class="github-link">@AvriliaKawonal14</a>
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Contact Form -->
-                <div class="card contact-form-card">
-                    <h3>Hubungi Kami</h3>
-                    <form
-                        class="contact-form-compact"
-                        method="POST"
-                        action="/contact"
-                    >
-                        <div class="form-row">
-                            <div class="form-group-compact">
-                                <label for="name">Nama</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    required
-                                    placeholder="Nama Anda"
-                                />
-                            </div>
-                            <div class="form-group-compact">
-                                <label for="email">Email</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    required
-                                    placeholder="email@example.com"
-                                />
-                            </div>
+                <!-- Advisors Section (in same box) -->
+                <h3 class="section-title" style="margin-top: 30px">
+                    Pengawas:
+                </h3>
+                <div class="team-grid">
+                    <!-- Advisor Card 1 -->
+                    <div class="team-card">
+                        <div class="team-photo">
+                            <img src="/static/avatar.jpg" alt="Advisor 1" />
                         </div>
-
-                        <div class="form-group-compact">
-                            <label for="subject">Subjek</label>
-                            <input
-                                type="text"
-                                id="subject"
-                                name="subject"
-                                required
-                                placeholder="Perihal pesan Anda"
-                            />
+                        <div class="team-info">
+                            <p>
+                                <strong>Nama:</strong> George M. W. Tangka,
+                                S.Kom., MBA
+                            </p>
+                            <p>
+                                <strong>Email:</strong> gtangka@unklab.ac.id
+                            </p>
                         </div>
+                    </div>
 
-                        <div class="form-group-compact">
-                            <label for="message">Pesan</label>
-                            <textarea
-                                id="message"
-                                name="message"
-                                rows="4"
-                                required
-                                placeholder="Tulis pesan Anda di sini..."
-                            ></textarea>
+                    <!-- Advisor Card 2 -->
+                    <div class="team-card">
+                        <div class="team-photo">
+                            <img src="/static/avatar.jpg" alt="Advisor 2" />
                         </div>
-
-                        <button type="submit" class="btn-submit">
-                            Kirim Pesan
-                        </button>
-                    </form>
+                        <div class="team-info">
+                            <p>
+                                <strong>Nama:</strong> Green A. Sandag,
+                                S.Kom., M.S.
+                            </p>
+                            <p>
+                                <strong>Email:</strong>
+                                greensandag@unklab.ac.id
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Toast Notification -->
-        <div id="toast" class="toast"></div>
+        <!-- Right Section -->
+        <div class="contact-right">
+            <!-- Project Information -->
+            <div class="card project-info-card">
+                <div class="project-header">
+                    <img src="/static/wound.png" alt="WoundAI Logo" class="project-logo" />
+                    <div class="project-brief">
+                        <p>
+                            Terima kasih telah menggunakan WoundAI! Kami
+                            adalah tim developer yang bersemangat
+                            menciptakan solusi kesehatan berbasis AI yang
+                            mudah digunakan. Setiap fitur dirancang dengan
+                            cermat untuk membantu Anda mendapatkan informasi
+                            perawatan luka yang cepat. Saran dan feedback
+                            Anda sangat berarti bagi kami!
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-badge">Flask</span>
+                            <span class="tech-badge">TensorFlow</span>
+                            <span class="tech-badge">Gemini AI</span>
+                            <span class="tech-badge">EfficientNetB1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Toast Script -->
-        <script>
-            // Show toast notification
-            function showToast(message, type) {
-                const toast = document.getElementById('toast');
-                toast.textContent = message;
-                toast.className = 'toast show ' + type;
+            <!-- Contact Form -->
+            <div class="card contact-form-card">
+                <h3>Hubungi Kami</h3>
+                <form class="contact-form-compact" method="POST" action="/contact">
+                    <div class="form-row">
+                        <div class="form-group-compact">
+                            <label for="name">Nama</label>
+                            <input type="text" id="name" name="name" required placeholder="Nama Anda" />
+                        </div>
+                        <div class="form-group-compact">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required placeholder="email@example.com" />
+                        </div>
+                    </div>
 
-                setTimeout(() => {
-                    toast.className = toast.className.replace('show', '');
-                }, 3000);
-            }
+                    <div class="form-group-compact">
+                        <label for="subject">Subjek</label>
+                        <input type="text" id="subject" name="subject" required placeholder="Perihal pesan Anda" />
+                    </div>
 
-            // Check for success/error messages from server
-            {% if message_sent %}
-            showToast('✅ Pesan berhasil dikirim!', 'success');
-            {% endif %}
+                    <div class="form-group-compact">
+                        <label for="message">Pesan</label>
+                        <textarea id="message" name="message" rows="4" required
+                            placeholder="Tulis pesan Anda di sini..."></textarea>
+                    </div>
 
-            {% if error %}
-            showToast('❌ Gagal mengirim pesan. Silakan coba lagi.', 'error');
-            {% endif %}
-        </script>
-    </body>
+                    <button type="submit" class="btn-submit">
+                        Kirim Pesan
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer" style="grid-column: 1 / -1; margin-top: auto;">
+            <p>© Fakultas Ilmu Komputer Universitas Klabat, 2025</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Toast Script -->
+    <script>
+        // Show toast notification
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+
+            setTimeout(() => {
+                toast.className = toast.className.replace('show', '');
+            }, 3000);
+        }
+
+        // Check for success/error messages from server
+        {% if message_sent %}
+        showToast('✅ Pesan berhasil dikirim!', 'success');
+        {% endif %}
+
+        {% if error %}
+        showToast('❌ Gagal mengirim pesan. Silakan coba lagi.', 'error');
+        {% endif %}
+    </script>
+</body>
+
 </html>

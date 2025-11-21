@@ -1,466 +1,364 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>WoundAi</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#fef9f6" />
-        <link rel="icon" href="/static/wound.png" type="image/x-icon" />
-        <link
-            rel="shortcut icon"
-            href="/static/wound.png"
-            type="image/x-icon"
-        />
-        <link
-            rel="icon"
-            href="/static/wound.png"
-            type="image/png"
-            sizes="32x32"
-        />
-        <link rel="stylesheet" href="/static/styles.css" />
-        <script src="/static/theme-toggle.js"></script>
-    </head>
-    <body>
-        <!-- Navigation Bar -->
-        <nav class="navbar">
-            <div class="navbar-logo">
-                <a href="/" class="logo-link">
-                    <img
-                        src="/static/wound.png"
-                        alt="WoundAI Logo"
-                        onerror="this.style.display='none'"
-                    />
-                    <span class="logo-text">WoundAI</span>
-                </a>
+
+<head>
+  <meta charset="utf-8" />
+  <title>WoundAi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#fef9f6" />
+  <link rel="icon" href="/static/wound.png" type="image/x-icon" />
+  <link rel="shortcut icon" href="/static/wound.png" type="image/x-icon" />
+  <link rel="icon" href="/static/wound.png" type="image/png" sizes="32x32" />
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="/static/theme-toggle.js"></script>
+</head>
+
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-logo">
+      <a href="/" class="logo-link">
+        <img src="/static/wound.png" alt="WoundAI Logo" onerror="this.style.display='none'" />
+        <span class="logo-text">WoundAI</span>
+      </a>
+    </div>
+    <div class="navbar-links">
+      <!-- Theme Toggle Button (Always Visible) -->
+      <button class="theme-toggle" aria-label="Toggle dark mode" title="Toggle theme" tabindex="0">
+        <span class="theme-toggle-icon sun">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
+          </svg>
+        </span>
+        <span class="theme-toggle-icon moon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+              clip-rule="evenodd" />
+          </svg>
+        </span>
+      </button>
+
+      <!-- Desktop Navigation Links -->
+      <div class="nav-menu">
+        <a href="/" class="nav-link active">Beranda</a>
+        <a href="/about" class="nav-link">Tentang</a>
+        <a href="/contact" class="nav-link">Kontak</a>
+      </div>
+
+      <!-- Mobile Hamburger Menu Button -->
+      <button class="hamburger-menu" id="hamburgerBtn" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <!-- Mobile Menu Dropdown -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="/" class="mobile-nav-link active">Beranda</a>
+      <a href="/about" class="mobile-nav-link">Tentang</a>
+      <a href="/contact" class="mobile-nav-link">Kontak</a>
+    </div>
+  </nav>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Menganalisa gambar</div>
+    <div class="progress-text" id="progressText"></div>
+  </div>
+
+  <!-- Zoom Backdrop -->
+  <div class="zoom-backdrop" id="zoomBackdrop"></div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Camera Modal -->
+  <div class="camera-modal" id="cameraModal">
+    <div class="camera-container">
+      <video id="cameraVideo" autoplay playsinline></video>
+      <canvas id="cameraCanvas"></canvas>
+      <div class="camera-controls">
+        <button class="camera-btn" id="captureBtn">
+          Capture Photo
+        </button>
+        <button class="camera-btn" id="switchCameraBtn">
+          Switch
+        </button>
+        <button class="camera-btn secondary" id="closeCameraBtn">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Get Started Modal -->
+  <div class="welcome-modal" id="welcomeModal">
+    <div class="welcome-modal-content">
+      <button class="modal-close-btn" id="closeModalBtn">✕</button>
+      <div class="modal-header">
+        <h2>Selamat Datang di WoundAI</h2>
+      </div>
+
+      <div class="modal-body">
+        <!-- Deskripsi Sistem -->
+        <section class="modal-section">
+          <h3>
+            <svg class="section-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <line x1="10" y1="9" x2="8" y2="9"></line>
+            </svg>
+            Tentang Sistem
+          </h3>
+          <p>
+            WoundAI adalah website berbasis AI yang secara
+            otomatis mengklasifikasikan, danmemberikan saran
+            penanganan untuk berbagai jenis luka. Didukung oleh
+            model arsitektur CNN EfficientNetB1 dan Google
+            Gemini AI, kami memberikan klasifikasi luka yang
+            akurat dengan visualisasi AI yang dapat dijelaskan.
+          </p>
+        </section>
+
+        <!-- Tutorial Section -->
+        <section class="modal-section">
+          <h3>
+            <svg class="section-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Cara Menggunakan
+          </h3>
+
+          <!-- Langkah 1 -->
+          <div class="tutorial-step">
+            <h4>Langkah 1: Unggah Gambar Luka</h4>
+            <p>
+              LLM akan memvalidasi apakah gambar yang diunggah
+              mengandung luka pada kulit atau tidak. Anda
+              dapat mengunggah gambar melalui
+              <strong>File</strong> atau langsung dari
+              <strong>Kamera</strong>.
+            </p>
+            <div class="tutorial-image">
+              <img src="/static/1.png" alt="Tutorial Upload" />
             </div>
-            <div class="navbar-links">
-                <!-- Theme Toggle Button (Always Visible) -->
-                <button
-                    class="theme-toggle"
-                    aria-label="Toggle dark mode"
-                    title="Toggle theme"
-                    tabindex="0"
-                >
-                    <span class="theme-toggle-icon sun">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                        >
-                            <path
-                                d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"
-                            />
-                        </svg>
-                    </span>
-                    <span class="theme-toggle-icon moon">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="currentColor"
-                        >
-                            <path
-                                fill-rule="evenodd"
-                                d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
-                                clip-rule="evenodd"
-                            />
-                        </svg>
-                    </span>
-                </button>
+          </div>
 
-                <!-- Desktop Navigation Links -->
-                <div class="nav-menu">
-                    <a href="/" class="nav-link active">Beranda</a>
-                    <a href="/about" class="nav-link">Tentang</a>
-                    <a href="/contact" class="nav-link">Kontak</a>
-                </div>
-
-                <!-- Mobile Hamburger Menu Button -->
-                <button
-                    class="hamburger-menu"
-                    id="hamburgerBtn"
-                    aria-label="Toggle menu"
-                >
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
+          <!-- Langkah 2 -->
+          <div class="tutorial-step">
+            <h4>Langkah 2: Hasil Prediksi</h4>
+            <p>
+              Hasil prediksi gambar akan ditampilkan di sini
+              beserta gambar <strong>Grad-CAM</strong> dan
+              <strong>Overlay</strong>, serta jenis luka hasil
+              prediksi model.
+            </p>
+            <div class="tutorial-image">
+              <img src="/static/2.png" alt="Tutorial Result" />
             </div>
+          </div>
 
-            <!-- Mobile Menu Dropdown -->
-            <div class="mobile-menu" id="mobileMenu">
-                <a href="/" class="mobile-nav-link active">Beranda</a>
-                <a href="/about" class="mobile-nav-link">Tentang</a>
-                <a href="/contact" class="mobile-nav-link">Kontak</a>
+          <!-- Langkah 3 -->
+          <div class="tutorial-step">
+            <h4>Langkah 3: Rekomendasi Penanganan</h4>
+            <p>
+              Section ini menampilkan cara untuk menangani dan
+              merawat luka yang dihasilkan oleh LLM
+              berdasarkan jenis luka yang diprediksi model.
+            </p>
+            <div class="tutorial-image">
+              <img src="/static/3.png" alt="Tutorial Gemini" />
             </div>
-        </nav>
+          </div>
+        </section>
 
-        <!-- Loading Overlay -->
-        <div class="loading-overlay" id="loadingOverlay">
-            <div class="spinner"></div>
-            <div class="loading-text">Menganalisa gambar</div>
-            <div class="progress-text" id="progressText"></div>
+        <!-- Informasi Platform -->
+        <section class="modal-section modal-info-section">
+          <p>
+            <svg class="inline-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <strong>Tutorial ini berlaku untuk platform Web dan
+              Mobile</strong>
+          </p>
+        </section>
+
+        <!-- Note -->
+        <section class="modal-section modal-footer-section">
+          <p>
+            <strong>Catatan:</strong> Alat ini dirancang untuk
+            membantu masyarakat dalam melakukan penanganan luka
+            secara mandiri, serta sebagai alat pendukung bagi
+            tenaga medis.
+          </p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="left-column">
+      <div class="card" id="upload-box">
+        <form method="POST" enctype="multipart/form-data" id="uploadForm" class="upload-controls">
+          <div class="input-row">
+            <label for="imageInput" class="file-label">Pilih file</label>
+            <input type="file" name="image" id="imageInput" accept=".png,.jpg,.jpeg,.webp" required />
+
+            <button type="button" class="icon-btn" id="cameraBtn">
+              Kamera
+            </button>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn" type="submit" id="analyzeBtn">
+              Analisis
+            </button>
+            <a href="/" class="btn btn-new">Baru</a>
+          </div>
+
+          <div class="file-info-row">
+            <div class="inline-spinner" id="inlineSpinner"></div>
+            <span id="fileNameDisplay">Tidak ada file yang dipilih</span>
+            <span id="clearFile">❌</span>
+          </div>
+        </form>
+
+        <div id="imagePreview" class="preview-box">
+          <span id="previewPlaceholder">PREVIEW IMAGE</span>
+          <img id="previewImg" alt="Image preview" />
+        </div>
+      </div>
+
+      <div class="card" id="result-box">
+        {% if result %} {% if result.status == "error" %}
+        <div class="err">Model tidak dimuat</div>
+        <pre>{{ result.message }}</pre>
+        <p class="muted">
+          Re-export your Keras model with input=(224,224,3).
+        </p>
+
+        {% elif result.status == "not_wound" %}
+        <div class="err">Bukan Gambar Luka</div>
+        <p class="muted">
+          Gemini triage indicates the uploaded image is not a
+          wound/ulcer.
+        </p>
+        {% if result.input_image %}
+        <div class="viz-container">
+          <div class="viz-box">
+            <img src="{{ '/' + result.input_image }}" alt="uploaded" />
+          </div>
+        </div>
+        {% endif %} {% elif result.status == "ok" %}
+        <div class="ok">Prediction completed</div>
+        <p>
+          <span class="label">Predicted Class:</span>
+          <span class="pill">{{ result.pred_label }}</span>
+        </p>
+        <p>
+          <span class="label">Confidence Score:</span> {{
+          result.confidence_pct }}%
+        </p>
+        <div class="confidence-bar">
+          <div class="confidence-fill" style="width: {{ result.confidence_pct }}%;"></div>
         </div>
 
-        <!-- Zoom Backdrop -->
-        <div class="zoom-backdrop" id="zoomBackdrop"></div>
-
-        <!-- Toast Container -->
-        <div class="toast-container" id="toastContainer"></div>
-
-        <!-- Camera Modal -->
-        <div class="camera-modal" id="cameraModal">
-            <div class="camera-container">
-                <video id="cameraVideo" autoplay playsinline></video>
-                <canvas id="cameraCanvas"></canvas>
-                <div class="camera-controls">
-                    <button class="camera-btn" id="captureBtn">
-                        Capture Photo
-                    </button>
-                    <button class="camera-btn" id="switchCameraBtn">
-                        Switch
-                    </button>
-                    <button class="camera-btn secondary" id="closeCameraBtn">
-                        Close
-                    </button>
-                </div>
-            </div>
+        <div class="viz-container">
+          <div class="viz-box" id="gradcam-box">
+            <img src="{{ '/' + result.heatmap_image }}" alt="heatmap" />
+            <div class="viz-label">GradCAM</div>
+          </div>
+          <div class="viz-box" id="overlay-box">
+            <img src="{{ '/' + result.overlay_image }}" alt="overlay" />
+            <div class="viz-label">Overlay</div>
+          </div>
         </div>
 
-        <!-- Get Started Modal -->
-        <div class="welcome-modal" id="welcomeModal">
-            <div class="welcome-modal-content">
-                <button class="modal-close-btn" id="closeModalBtn">✕</button>
-                <div class="modal-header">
-                    <h2>Selamat Datang di WoundAI</h2>
-                </div>
+        {% endif %} {% else %}
+        <p>
+          Unggah gambar dan klik "Analisis" untuk melihat hasil di
+          sini...
+        </p>
+        {% endif %}
+      </div>
+    </div>
 
-                <div class="modal-body">
-                    <!-- Deskripsi Sistem -->
-                    <section class="modal-section">
-                        <h3>
-                            <svg
-                                class="section-icon"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path
-                                    d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
-                                ></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <line x1="10" y1="9" x2="8" y2="9"></line>
-                            </svg>
-                            Tentang Sistem
-                        </h3>
-                        <p>
-                            WoundAI adalah website berbasis AI yang secara
-                            otomatis mengklasifikasikan, danmemberikan saran
-                            penanganan untuk berbagai jenis luka. Didukung oleh
-                            model arsitektur CNN EfficientNetB1 dan Google
-                            Gemini AI, kami memberikan klasifikasi luka yang
-                            akurat dengan visualisasi AI yang dapat dijelaskan.
-                        </p>
-                    </section>
-
-                    <!-- Tutorial Section -->
-                    <section class="modal-section">
-                        <h3>
-                            <svg
-                                class="section-icon"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path
-                                    d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
-                                ></path>
-                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                            </svg>
-                            Cara Menggunakan
-                        </h3>
-
-                        <!-- Langkah 1 -->
-                        <div class="tutorial-step">
-                            <h4>Langkah 1: Unggah Gambar Luka</h4>
-                            <p>
-                                LLM akan memvalidasi apakah gambar yang diunggah
-                                mengandung luka pada kulit atau tidak. Anda
-                                dapat mengunggah gambar melalui
-                                <strong>File</strong> atau langsung dari
-                                <strong>Kamera</strong>.
-                            </p>
-                            <div class="tutorial-image">
-                                <img
-                                    src="/static/1.png"
-                                    alt="Tutorial Upload"
-                                />
-                            </div>
-                        </div>
-
-                        <!-- Langkah 2 -->
-                        <div class="tutorial-step">
-                            <h4>Langkah 2: Hasil Prediksi</h4>
-                            <p>
-                                Hasil prediksi gambar akan ditampilkan di sini
-                                beserta gambar <strong>Grad-CAM</strong> dan
-                                <strong>Overlay</strong>, serta jenis luka hasil
-                                prediksi model.
-                            </p>
-                            <div class="tutorial-image">
-                                <img
-                                    src="/static/2.png"
-                                    alt="Tutorial Result"
-                                />
-                            </div>
-                        </div>
-
-                        <!-- Langkah 3 -->
-                        <div class="tutorial-step">
-                            <h4>Langkah 3: Rekomendasi Penanganan</h4>
-                            <p>
-                                Section ini menampilkan cara untuk menangani dan
-                                merawat luka yang dihasilkan oleh LLM
-                                berdasarkan jenis luka yang diprediksi model.
-                            </p>
-                            <div class="tutorial-image">
-                                <img
-                                    src="/static/3.png"
-                                    alt="Tutorial Gemini"
-                                />
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Informasi Platform -->
-                    <section class="modal-section modal-info-section">
-                        <p>
-                            <svg
-                                class="inline-icon"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            <strong
-                                >Tutorial ini berlaku untuk platform Web dan
-                                Mobile</strong
-                            >
-                        </p>
-                    </section>
-
-                    <!-- Note -->
-                    <section class="modal-section modal-footer-section">
-                        <p>
-                            <strong>Catatan:</strong> Alat ini dirancang untuk
-                            membantu masyarakat dalam melakukan penanganan luka
-                            secara mandiri, serta sebagai alat pendukung bagi
-                            tenaga medis.
-                        </p>
-                    </section>
-                </div>
-            </div>
+    <div class="right-column">
+      <div class="card" id="gemini-box">
+        <div class="gemini-header">
+          <h3>Penanganan LLM</h3>
+          <button id="copyGeminiBtn" class="copy-btn" style="display: none;" title="Salin Penanganan">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Salin
+          </button>
         </div>
 
-        <div class="main-grid">
-            <div class="left-column">
-                <div class="card" id="upload-box">
-                    <form
-                        method="POST"
-                        enctype="multipart/form-data"
-                        id="uploadForm"
-                        class="upload-controls"
-                    >
-                        <div class="input-row">
-                            <label for="imageInput" class="file-label"
-                                >Pilih file</label
-                            >
-                            <input
-                                type="file"
-                                name="image"
-                                id="imageInput"
-                                accept=".png,.jpg,.jpeg,.webp"
-                                required
-                            />
-
-                            <button
-                                type="button"
-                                class="icon-btn"
-                                id="cameraBtn"
-                            >
-                                Kamera
-                            </button>
-                        </div>
-
-                        <div class="btn-group">
-                            <button class="btn" type="submit" id="analyzeBtn">
-                                Analisis
-                            </button>
-                            <a href="/" class="btn btn-new">Baru</a>
-                        </div>
-
-                        <div class="file-info-row">
-                            <div
-                                class="inline-spinner"
-                                id="inlineSpinner"
-                            ></div>
-                            <span id="fileNameDisplay"
-                                >Tidak ada file yang dipilih</span
-                            >
-                            <span id="clearFile">❌</span>
-                        </div>
-                    </form>
-
-                    <div id="imagePreview" class="preview-box">
-                        <span id="previewPlaceholder">PREVIEW IMAGE</span>
-                        <img id="previewImg" alt="Image preview" />
-                    </div>
-                </div>
-
-                <div class="card" id="result-box">
-                    {% if result %} {% if result.status == "error" %}
-                    <div class="err">Model tidak dimuat</div>
-                    <pre>{{ result.message }}</pre>
-                    <p class="muted">
-                        Re-export your Keras model with input=(224,224,3).
-                    </p>
-
-                    {% elif result.status == "not_wound" %}
-                    <div class="err">Bukan Gambar Luka</div>
-                    <p class="muted">
-                        Gemini triage indicates the uploaded image is not a
-                        wound/ulcer.
-                    </p>
-                    {% if result.input_image %}
-                    <div class="viz-container">
-                        <div class="viz-box">
-                            <img
-                                src="{{ '/' + result.input_image }}"
-                                alt="uploaded"
-                            />
-                        </div>
-                    </div>
-                    {% endif %} {% elif result.status == "ok" %}
-                    <div class="ok">Prediction completed</div>
-                    <p>
-                        <span class="label">Predicted Class:</span>
-                        <span class="pill">{{ result.pred_label }}</span>
-                    </p>
-                    <p>
-                        <span class="label">Confidence Score:</span> {{
-                        result.confidence_pct }}%
-                    </p>
-                    <div class="confidence-bar">
-                        <div
-                            class="confidence-fill"
-                            style="width: {{ result.confidence_pct }}%;"
-                        ></div>
-                    </div>
-
-                    <div class="viz-container">
-                        <div class="viz-box" id="gradcam-box">
-                            <img
-                                src="{{ '/' + result.heatmap_image }}"
-                                alt="heatmap"
-                            />
-                            <div class="viz-label">GradCAM</div>
-                        </div>
-                        <div class="viz-box" id="overlay-box">
-                            <img
-                                src="{{ '/' + result.overlay_image }}"
-                                alt="overlay"
-                            />
-                            <div class="viz-label">Overlay</div>
-                        </div>
-                    </div>
-
-                    {% endif %} {% else %}
-                    <p>
-                        Unggah gambar dan klik "Analisis" untuk melihat hasil di
-                        sini...
-                    </p>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="right-column">
-                <div class="card" id="gemini-box">
-                    <h3>Penanganan LLM</h3>
-
-                    {% if result and result.status == "ok" %}
-                    <div class="gemini-content">
-                        {{ result.gemini_html | safe }}
-                    </div>
-                    {% else %}
-                    <div
-                        class="gemini-content"
-                        style="
+        {% if result and result.status == "ok" %}
+        <div class="gemini-content">
+          {{ result.gemini_html | safe }}
+        </div>
+        {% else %}
+        <div class="gemini-content" style="
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                        "
-                    >
-                        <p
-                            style="
+                        ">
+          <p style="
                                 text-align: center;
                                 font-size: 0.95rem;
                                 font-weight: 600;
-                            "
-                        >
-                            Hasil analisis dan penanganan dari Gemini LLM akan
-                            muncul di sini...
-                        </p>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
+                            ">
+            Hasil analisis dan penanganan dari Gemini LLM akan
+            muncul di sini...
+          </p>
         </div>
-        <script>
-              // --- JavaScript for UI interactivity ---
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <script>
+    // --- JavaScript for UI interactivity ---
 
-              const imageInput = document.getElementById('imageInput');
-              const cameraBtn = document.getElementById('cameraBtn');
-              const imagePreview = document.getElementById('imagePreview');
-              const previewImg = document.getElementById('previewImg');
-              const previewPlaceholder = document.getElementById('previewPlaceholder');
-              const fileNameDisplay = document.getElementById('fileNameDisplay');
-              const clearFile = document.getElementById('clearFile');
-              const inlineSpinner = document.getElementById('inlineSpinner');
+    const imageInput = document.getElementById('imageInput');
+    const cameraBtn = document.getElementById('cameraBtn');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const previewPlaceholder = document.getElementById('previewPlaceholder');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+    const clearFile = document.getElementById('clearFile');
+    const inlineSpinner = document.getElementById('inlineSpinner');
 
-              // Toast Notification System
-              function showToast(type, title, message) {
-                const toastContainer = document.getElementById('toastContainer');
+    // Toast Notification System
+    function showToast(type, title, message) {
+      const toastContainer = document.getElementById('toastContainer');
 
-                // Icon mapping
-                const icons = {
-                  success: '✓',
-                  error: '✕',
-                  warning: '⚠',
-                  info: 'ℹ'
-                };
+      // Icon mapping
+      const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
+      };
 
-                // Create toast element
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                toast.innerHTML = `
+      // Create toast element
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
                   <div class="toast-icon">${icons[type] || 'ℹ'}</div>
                   <div class="toast-content">
                     <div class="toast-title">${title}</div>
@@ -469,277 +367,277 @@
                   <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
                 `;
 
-                toastContainer.appendChild(toast);
+      toastContainer.appendChild(toast);
 
-                // Auto remove after 3 seconds
-                setTimeout(() => {
-                  if (toast.parentElement) {
-                    toast.remove();
-                  }
-                }, 3000);
-              }
+      // Auto remove after 3 seconds
+      setTimeout(() => {
+        if (toast.parentElement) {
+          toast.remove();
+        }
+      }, 3000);
+    }
 
-            // Camera modal elements
-            const cameraModal = document.getElementById('cameraModal');
-            const cameraVideo = document.getElementById('cameraVideo');
-            const cameraCanvas = document.getElementById('cameraCanvas');
-            const captureBtn = document.getElementById('captureBtn');
-            const closeCameraBtn = document.getElementById('closeCameraBtn');
-            const switchCameraBtn = document.getElementById('switchCameraBtn');
-            let cameraStream = null;
-            let currentFacingMode = 'environment'; // default to rear on mobile
+    // Camera modal elements
+    const cameraModal = document.getElementById('cameraModal');
+    const cameraVideo = document.getElementById('cameraVideo');
+    const cameraCanvas = document.getElementById('cameraCanvas');
+    const captureBtn = document.getElementById('captureBtn');
+    const closeCameraBtn = document.getElementById('closeCameraBtn');
+    const switchCameraBtn = document.getElementById('switchCameraBtn');
+    let cameraStream = null;
+    let currentFacingMode = 'environment'; // default to rear on mobile
 
-              // 1. Handle image preview and file name display
-              function handleFileSelect(file) {
-                if (file) {
-                  const reader = new FileReader();
+    // 1. Handle image preview and file name display
+    function handleFileSelect(file) {
+      if (file) {
+        const reader = new FileReader();
 
-                  reader.onload = function(event) {
-                    previewImg.src = event.target.result;
-                    previewImg.style.display = 'block';
-                    previewPlaceholder.style.display = 'none';
-                  };
+        reader.onload = function (event) {
+          previewImg.src = event.target.result;
+          previewImg.style.display = 'block';
+          previewPlaceholder.style.display = 'none';
+        };
 
-                  reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
 
-                  // Update file name display
-                  fileNameDisplay.textContent = file.name;
-                  fileNameDisplay.style.display = 'inline'; // Show file name
-                  clearFile.style.display = 'inline'; // Show clear button
-                } else {
-                  resetPreview();
-                }
-              }
+        // Update file name display
+        fileNameDisplay.textContent = file.name;
+        fileNameDisplay.style.display = 'inline'; // Show file name
+        clearFile.style.display = 'inline'; // Show clear button
+      } else {
+        resetPreview();
+      }
+    }
 
-              imageInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                handleFileSelect(file);
-                if (file) runTriage(file);
-              });
+    imageInput.addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      handleFileSelect(file);
+      if (file) runTriage(file);
+    });
 
-              // 2. Camera button functionality - Open real camera
-              cameraBtn.addEventListener('click', async function() {
-                try {
-                  cameraModal.classList.add('active');
-                  await startCamera(currentFacingMode);
-                } catch (err) {
-                  showToast('error', 'Camera Access Denied', 'Unable to access your camera. Please check your browser permissions and try again.');
-                  cameraModal.classList.remove('active');
-                }
-              });
+    // 2. Camera button functionality - Open real camera
+    cameraBtn.addEventListener('click', async function () {
+      try {
+        cameraModal.classList.add('active');
+        await startCamera(currentFacingMode);
+      } catch (err) {
+        showToast('error', 'Camera Access Denied', 'Unable to access your camera. Please check your browser permissions and try again.');
+        cameraModal.classList.remove('active');
+      }
+    });
 
-              // Switch camera (front/back) on mobile devices
-              switchCameraBtn.addEventListener('click', async function() {
-                // Toggle facing mode
-                currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
-                try {
-                  await startCamera(currentFacingMode);
-                } catch (err) {
-                  console.warn('Switch camera failed:', err);
-                }
-              });
+    // Switch camera (front/back) on mobile devices
+    switchCameraBtn.addEventListener('click', async function () {
+      // Toggle facing mode
+      currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
+      try {
+        await startCamera(currentFacingMode);
+      } catch (err) {
+        console.warn('Switch camera failed:', err);
+      }
+    });
 
-              async function startCamera(facingMode) {
-                // Stop any existing stream first
-                if (cameraStream) {
-                  cameraStream.getTracks().forEach(track => track.stop());
-                  cameraStream = null;
-                }
+    async function startCamera(facingMode) {
+      // Stop any existing stream first
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
 
-                // Try to get camera with facingMode constraint
-                const constraints = {
-                  video: {
-                    facingMode: { exact: facingMode },
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                  },
-                  audio: false
-                };
+      // Try to get camera with facingMode constraint
+      const constraints = {
+        video: {
+          facingMode: { exact: facingMode },
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        },
+        audio: false
+      };
 
-                try {
-                  cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-                } catch (err) {
-                  // Some browsers/devices don't support exact facingMode; try a looser constraint
-                  try {
-                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode }, audio: false });
-                  } catch (err2) {
-                    // Fallback to default camera
-                    cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                  }
-                }
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+      } catch (err) {
+        // Some browsers/devices don't support exact facingMode; try a looser constraint
+        try {
+          cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode }, audio: false });
+        } catch (err2) {
+          // Fallback to default camera
+          cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        }
+      }
 
-                cameraVideo.srcObject = cameraStream;
-                // Some browsers require play() call after srcObject set
-                try { await cameraVideo.play(); } catch(e) { /* ignore */ }
-              }
+      cameraVideo.srcObject = cameraStream;
+      // Some browsers require play() call after srcObject set
+      try { await cameraVideo.play(); } catch (e) { /* ignore */ }
+    }
 
-            // 3. Capture photo from camera
-              captureBtn.addEventListener('click', function() {
-                // Set canvas size to match video
-                cameraCanvas.width = cameraVideo.videoWidth;
-                cameraCanvas.height = cameraVideo.videoHeight;
+    // 3. Capture photo from camera
+    captureBtn.addEventListener('click', function () {
+      // Set canvas size to match video
+      cameraCanvas.width = cameraVideo.videoWidth;
+      cameraCanvas.height = cameraVideo.videoHeight;
 
-                // Draw current video frame to canvas
-                const ctx = cameraCanvas.getContext('2d');
-                ctx.drawImage(cameraVideo, 0, 0);
+      // Draw current video frame to canvas
+      const ctx = cameraCanvas.getContext('2d');
+      ctx.drawImage(cameraVideo, 0, 0);
 
-                // Convert canvas to blob and create file
-                cameraCanvas.toBlob(function(blob) {
-                  const file = new File([blob], `camera_${Date.now()}.jpg`, { type: 'image/jpeg' });
+      // Convert canvas to blob and create file
+      cameraCanvas.toBlob(function (blob) {
+        const file = new File([blob], `camera_${Date.now()}.jpg`, { type: 'image/jpeg' });
 
-                  // Transfer to main input
-                  const dataTransfer = new DataTransfer();
-                  dataTransfer.items.add(file);
-                  imageInput.files = dataTransfer.files;
+        // Transfer to main input
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        imageInput.files = dataTransfer.files;
 
-                  // Show preview
-                  handleFileSelect(file);
-                  // Run triage on captured image
-                  runTriage(file);
-                  // Close camera modal after capture
-                  stopCamera();
-                }, 'image/jpeg', 0.95);
-              });
+        // Show preview
+        handleFileSelect(file);
+        // Run triage on captured image
+        runTriage(file);
+        // Close camera modal after capture
+        stopCamera();
+      }, 'image/jpeg', 0.95);
+    });
 
-              // 4. Close camera modal
-              closeCameraBtn.addEventListener('click', function() {
-                stopCamera();
-              });
+    // 4. Close camera modal
+    closeCameraBtn.addEventListener('click', function () {
+      stopCamera();
+    });
 
-              // Stop camera stream
-              function stopCamera() {
-                if (cameraStream) {
-                  cameraStream.getTracks().forEach(track => track.stop());
-                  cameraStream = null;
-                }
-                cameraModal.classList.remove('active');
-              }
+    // Stop camera stream
+    function stopCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+      cameraModal.classList.remove('active');
+    }
 
-              // 5. Handle the 'clear file' (X) button
-              clearFile.addEventListener('click', function() {
-                imageInput.value = null;
-                resetPreview();
-              });
+    // 5. Handle the 'clear file' (X) button
+    clearFile.addEventListener('click', function () {
+      imageInput.value = null;
+      resetPreview();
+    });
 
-              // 6. Reset helper function
-              function resetPreview() {
-                previewImg.src = '';
-                previewImg.style.display = 'none';
-                previewPlaceholder.style.display = 'block';
-                fileNameDisplay.textContent = 'No file selected';
-                fileNameDisplay.style.display = 'none'; // Hide file name
-                clearFile.style.display = 'none'; // Hide clear button
-                inlineSpinner.classList.remove('active'); // Hide spinner
-              }
+    // 6. Reset helper function
+    function resetPreview() {
+      previewImg.src = '';
+      previewImg.style.display = 'none';
+      previewPlaceholder.style.display = 'block';
+      fileNameDisplay.textContent = 'No file selected';
+      fileNameDisplay.style.display = 'none'; // Hide file name
+      clearFile.style.display = 'none'; // Hide clear button
+      inlineSpinner.classList.remove('active'); // Hide spinner
+    }
 
-              // 7. Show inline loading spinner when form is submitted
-              const uploadForm = document.getElementById('uploadForm');
-              const loadingOverlay = document.getElementById('loadingOverlay');
-              const analyzeBtn = document.getElementById('analyzeBtn');
+    // 7. Show inline loading spinner when form is submitted
+    const uploadForm = document.getElementById('uploadForm');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const analyzeBtn = document.getElementById('analyzeBtn');
 
-              uploadForm.addEventListener('submit', async function(e) {
-                e.preventDefault(); // Prevent default form submission
+    uploadForm.addEventListener('submit', async function (e) {
+      e.preventDefault(); // Prevent default form submission
 
-                // Show inline spinner next to file name
-                inlineSpinner.classList.add('active');
-                analyzeBtn.disabled = true;
-                // Keep full screen overlay too for better UX
-                loadingOverlay.classList.add('active');
+      // Show inline spinner next to file name
+      inlineSpinner.classList.add('active');
+      analyzeBtn.disabled = true;
+      // Keep full screen overlay too for better UX
+      loadingOverlay.classList.add('active');
 
-                const file = imageInput.files[0];
-                if (!file) return; // let server validate
+      const file = imageInput.files[0];
+      if (!file) return; // let server validate
 
-                // If triage hasn't run yet, run it now synchronously before submitting
-                if (uploadForm.dataset.triage !== 'true') {
-                  await runTriage(file);
-                }
+      // If triage hasn't run yet, run it now synchronously before submitting
+      if (uploadForm.dataset.triage !== 'true') {
+        await runTriage(file);
+      }
 
-                // If triage failed (NOT_WOUND), cancel submit and show message
-                if (uploadForm.dataset.triage === 'false') {
-                  loadingOverlay.classList.remove('active');
-                  inlineSpinner.classList.remove('active');
-                  analyzeBtn.disabled = false;
-                  showToast('error', 'Not a Wound Image', uploadForm.dataset.triage_msg || 'The uploaded image does not appear to be a wound. Please upload a valid wound image.');
-                  return;
-                }
+      // If triage failed (NOT_WOUND), cancel submit and show message
+      if (uploadForm.dataset.triage === 'false') {
+        loadingOverlay.classList.remove('active');
+        inlineSpinner.classList.remove('active');
+        analyzeBtn.disabled = false;
+        showToast('error', 'Not a Wound Image', uploadForm.dataset.triage_msg || 'The uploaded image does not appear to be a wound. Please upload a valid wound image.');
+        return;
+      }
 
-                // Start progress polling
-                const progressText = document.getElementById('progressText');
-                let progressInterval = setInterval(async () => {
-                  try {
-                    const resp = await fetch('/progress');
-                    const data = await resp.json();
-                    if (data.progress) {
-                      progressText.textContent = data.progress;
-                    }
-                  } catch (err) {
-                    console.error('Progress polling error:', err);
-                  }
-                }, 200); // Poll every 200ms
+      // Start progress polling
+      const progressText = document.getElementById('progressText');
+      let progressInterval = setInterval(async () => {
+        try {
+          const resp = await fetch('/progress');
+          const data = await resp.json();
+          if (data.progress) {
+            progressText.textContent = data.progress;
+          }
+        } catch (err) {
+          console.error('Progress polling error:', err);
+        }
+      }, 200); // Poll every 200ms
 
-                // Submit via AJAX
-                try {
-                  const formData = new FormData();
-                  formData.append('image', file);
+      // Submit via AJAX
+      try {
+        const formData = new FormData();
+        formData.append('image', file);
 
-                  const response = await fetch('/analyze', {
-                    method: 'POST',
-                    body: formData
-                  });
+        const response = await fetch('/analyze', {
+          method: 'POST',
+          body: formData
+        });
 
-                  // IMPORTANT: Stop polling immediately when response received
-                  if (progressInterval) {
-                    clearInterval(progressInterval);
-                    progressInterval = null;
-                  }
-                  progressText.textContent = '';
+        // IMPORTANT: Stop polling immediately when response received
+        if (progressInterval) {
+          clearInterval(progressInterval);
+          progressInterval = null;
+        }
+        progressText.textContent = '';
 
-                  if (!response.ok) {
-                    throw new Error('Analysis failed');
-                  }
+        if (!response.ok) {
+          throw new Error('Analysis failed');
+        }
 
-                  const result = await response.json();
+        const result = await response.json();
 
-                  // Hide loading overlay
-                  loadingOverlay.classList.remove('active');
-                  inlineSpinner.classList.remove('active');
-                  analyzeBtn.disabled = false;
+        // Hide loading overlay
+        loadingOverlay.classList.remove('active');
+        inlineSpinner.classList.remove('active');
+        analyzeBtn.disabled = false;
 
-                  // Display results on the page
-                  displayResults(result);
+        // Display results on the page
+        displayResults(result);
 
-                  // Show success toast if analysis completed
-                  if (result.status === 'ok') {
-                    showToast('success', 'Analysis Complete', `Wound classified as: ${result.pred_label} with ${result.confidence_pct}% confidence.`);
-                  }
+        // Show success toast if analysis completed
+        if (result.status === 'ok') {
+          showToast('success', 'Analysis Complete', `Wound classified as: ${result.pred_label} with ${result.confidence_pct}% confidence.`);
+        }
 
-                } catch (error) {
-                  // Make sure to stop polling on error too
-                  if (progressInterval) {
-                    clearInterval(progressInterval);
-                    progressInterval = null;
-                  }
-                  progressText.textContent = '';
-                  loadingOverlay.classList.remove('active');
-                  inlineSpinner.classList.remove('active');
-                  analyzeBtn.disabled = false;
-                  showToast('error', 'Analysis Failed', 'An error occurred during image analysis. Please try again.');
-                }
-              });
+      } catch (error) {
+        // Make sure to stop polling on error too
+        if (progressInterval) {
+          clearInterval(progressInterval);
+          progressInterval = null;
+        }
+        progressText.textContent = '';
+        loadingOverlay.classList.remove('active');
+        inlineSpinner.classList.remove('active');
+        analyzeBtn.disabled = false;
+        showToast('error', 'Analysis Failed', 'An error occurred during image analysis. Please try again.');
+      }
+    });
 
-              // Function to display results dynamically
-              function displayResults(result) {
-                const resultBox = document.getElementById('result-box');
-                const geminiBox = document.getElementById('gemini-box');
+    // Function to display results dynamically
+    function displayResults(result) {
+      const resultBox = document.getElementById('result-box');
+      const geminiBox = document.getElementById('gemini-box');
 
-                if (result.status === 'error') {
-                  resultBox.innerHTML = `
+      if (result.status === 'error') {
+        resultBox.innerHTML = `
                     <div class="err">Model Load Error</div>
                     <pre>${result.message}</pre>
                     <p class="muted">Re-export your Keras model with input=(224,224,3).</p>
                   `;
-                } else if (result.status === 'not_wound') {
-                  resultBox.innerHTML = `
+      } else if (result.status === 'not_wound') {
+        resultBox.innerHTML = `
                     <div class="err">Bukan Gambar Luka</div>
                     <p class="muted">Gemini triage indicates the uploaded image is not a wound/ulcer.</p>
                     ${result.input_image ? `
@@ -750,9 +648,9 @@
                       </div>
                     ` : ''}
                   `;
-                } else if (result.status === 'ok') {
-                  // Update result box
-                  resultBox.innerHTML = `
+      } else if (result.status === 'ok') {
+        // Update result box
+        resultBox.innerHTML = `
                     <div class="ok">Prediction completed</div>
                     <p>
                       <span class="label">Predicted Class:</span>
@@ -777,209 +675,252 @@
                     </div>
                   `;
 
-                  // Update Gemini box - properly handle the content container
-                  const geminiContent = geminiBox.querySelector('.gemini-content');
-                  if (geminiContent) {
-                    // Remove any inline styles that might be affecting layout
-                    geminiContent.removeAttribute('style');
-                    geminiContent.innerHTML = result.gemini_html;
-                  }
-                }
+        // Update Gemini box - properly handle the content container
+        const geminiContent = geminiBox.querySelector('.gemini-content');
+        if (geminiContent) {
+          // Remove any inline styles that might be affecting layout
+          geminiContent.removeAttribute('style');
+          geminiContent.innerHTML = result.gemini_html;
+        }
 
-                // Scroll to results
-                resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-              }
+        // Show copy button
+        const copyBtn = document.getElementById('copyGeminiBtn');
+        if (copyBtn) {
+          copyBtn.style.display = 'flex';
+        }
+      }
 
-              async function runTriage(file) {
-                // Run fast LLM triage via AJAX; set uploadForm.dataset.triage = 'true'|'false'
-                console.log('[runTriage] Starting Gemini validation...');
-                inlineSpinner.classList.add('active');
-                fileNameDisplay.textContent = 'Validating with Gemini AI...';
+      // Scroll to results
+      resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 
-                try {
-                  const fd = new FormData();
-                  fd.append('image', file, file.name);
-                  const resp = await fetch('/triage', { method: 'POST', body: fd });
+    // Copy functionality
+    const copyGeminiBtn = document.getElementById('copyGeminiBtn');
+    if (copyGeminiBtn) {
+      copyGeminiBtn.addEventListener('click', function () {
+        const geminiContent = document.querySelector('.gemini-content');
+        if (!geminiContent) return;
 
-                  if (!resp.ok) {
-                    console.warn('[runTriage] Triage request failed', resp.status);
-                    uploadForm.dataset.triage = 'true';
-                    fileNameDisplay.textContent = file.name;
-                    return;
-                  }
+        // Get text content
+        const textToCopy = geminiContent.innerText;
 
-                  const j = await resp.json();
-                  console.log('[runTriage] Gemini response:', j);
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          // Show success feedback
+          const originalHTML = copyGeminiBtn.innerHTML;
+          copyGeminiBtn.innerHTML = `
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-success);">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  Disalin!
+              `;
 
-                  uploadForm.dataset.triage = j.is_wound ? 'true' : 'false';
-                  uploadForm.dataset.triage_msg = j.message || '';
+          setTimeout(() => {
+            copyGeminiBtn.innerHTML = originalHTML;
+          }, 2000);
 
-                  if (!j.is_wound) {
-                    // Show a quick user-facing message and keep preview
-                    console.log('[runTriage] ✗ Image rejected - not a wound');
-                    showToast('warning', 'Verifikasi Gambar Gagal', j.message || 'Gambar yang diunggah tidak tampak seperti luka. Silakan unggah gambar luka yang jelas.');
-                    analyzeBtn.disabled = true;
-                    fileNameDisplay.textContent = file.name + ' (bukan luka)';
-                  } else {
-                    console.log('[runTriage] ✓ Image validated - is a wound/skin');
-                    analyzeBtn.disabled = false;
-                    fileNameDisplay.textContent = file.name + ' (telah divalidasi)';
-                  }
-                } catch (err) {
-                  console.error('[runTriage] Triage error', err);
-                  // On error, be permissive and allow processing to continue server-side
-                  uploadForm.dataset.triage = 'true';
-                  analyzeBtn.disabled = false;
-                  fileNameDisplay.textContent = file.name;
-                } finally {
-                  inlineSpinner.classList.remove('active');
-                }
-              }
+          showToast('success', 'Berhasil Disalin', 'Konten penanganan telah disalin ke clipboard.');
+        }).catch(err => {
+          console.error('Failed to copy:', err);
+          showToast('error', 'Gagal Menyalin', 'Tidak dapat menyalin konten. Silakan coba lagi.');
+        });
+      });
+    }
+    async function runTriage(file) {
+      // Run fast LLM triage via AJAX; set uploadForm.dataset.triage = 'true'|'false'
+      console.log('[runTriage] Starting Gemini validation...');
+      inlineSpinner.classList.add('active');
+      fileNameDisplay.textContent = 'Validasi dengan Gemini AI ...';
 
-              // 8. Hide loading overlay if user comes back (e.g., form error)
-              window.addEventListener('pageshow', function(event) {
-                if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
-                  loadingOverlay.classList.remove('active');
-                  inlineSpinner.classList.remove('active');
-                  analyzeBtn.disabled = false;
-                }
-              });
+      try {
+        const fd = new FormData();
+        fd.append('image', file, file.name);
+        const resp = await fetch('/triage', { method: 'POST', body: fd });
 
-              // 9. Keep preview image after page reload (if result exists)
-              {% if result and result.input_image %}
-              window.addEventListener('DOMContentLoaded', function() {
-                // If we have a result, show the uploaded image in preview
-                const uploadedImage = "{{ '/' + result.input_image }}";
-                previewImg.src = uploadedImage;
-                previewImg.style.display = 'block';
-                previewPlaceholder.style.display = 'none';
-                fileNameDisplay.textContent = 'Analyzed image';
-                fileNameDisplay.style.display = 'inline';
-                clearFile.style.display = 'inline';
-              });
-              {% endif %}
+        if (!resp.ok) {
+          console.warn('[runTriage] Triage request failed', resp.status);
+          uploadForm.dataset.triage = 'true';
+          fileNameDisplay.textContent = file.name;
+          return;
+        }
 
-              // 10. Image zoom functionality for gradcam and overlay images
-              const zoomBackdrop = document.getElementById('zoomBackdrop');
+        const j = await resp.json();
+        console.log('[runTriage] Gemini response:', j);
 
-              // Add click listeners to all viz-box elements
-              document.addEventListener('click', function(e) {
-                const vizBox = e.target.closest('.viz-box');
+        uploadForm.dataset.triage = j.is_wound ? 'true' : 'false';
+        uploadForm.dataset.triage_msg = j.message || '';
 
-                if (vizBox) {
-                  // Check if clicking on a viz-box with an image
-                  const img = vizBox.querySelector('img');
-                  if (img && img.src) {
-                    // Toggle zoom
-                    if (vizBox.classList.contains('zoomed')) {
-                      // Zoom out
-                      vizBox.classList.remove('zoomed');
-                      zoomBackdrop.classList.remove('active');
-                      document.body.style.overflow = '';
-                    } else {
-                      // Close any other zoomed images first
-                      document.querySelectorAll('.viz-box.zoomed').forEach(box => {
-                        box.classList.remove('zoomed');
-                      });
-                      // Zoom in
-                      vizBox.classList.add('zoomed');
-                      zoomBackdrop.classList.add('active');
-                      document.body.style.overflow = 'hidden';
-                    }
-                  }
-                } else if (e.target === zoomBackdrop) {
-                  // Click on backdrop closes zoom
-                  document.querySelectorAll('.viz-box.zoomed').forEach(box => {
-                    box.classList.remove('zoomed');
-                  });
-                  zoomBackdrop.classList.remove('active');
-                  document.body.style.overflow = '';
-                }
-              });
+        if (!j.is_wound) {
+          // Show a quick user-facing message and keep preview
+          console.log('[runTriage] ✗ Image rejected - not a wound');
+          showToast('warning', 'Verifikasi Gambar Gagal', j.message || 'Gambar yang diunggah tidak tampak seperti luka. Silakan unggah gambar luka yang jelas.');
+          analyzeBtn.disabled = true;
+          fileNameDisplay.textContent = file.name + ' (bukan luka)';
+        } else {
+          console.log('[runTriage] ✓ Image validated - is a wound/skin');
+          analyzeBtn.disabled = false;
+          fileNameDisplay.textContent = file.name + ' (telah divalidasi)';
+        }
+      } catch (err) {
+        console.error('[runTriage] Triage error', err);
+        // On error, be permissive and allow processing to continue server-side
+        uploadForm.dataset.triage = 'true';
+        analyzeBtn.disabled = false;
+        fileNameDisplay.textContent = file.name;
+      } finally {
+        inlineSpinner.classList.remove('active');
+      }
+    }
 
-              // --- Welcome Modal Functionality ---
-              const welcomeModal = document.getElementById('welcomeModal');
-              const closeModalBtn = document.getElementById('closeModalBtn');
-              const WELCOME_MODAL_KEY = 'woundai_welcome_shown';
+    // 8. Hide loading overlay if user comes back (e.g., form error)
+    window.addEventListener('pageshow', function (event) {
+      if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+        loadingOverlay.classList.remove('active');
+        inlineSpinner.classList.remove('active');
+        analyzeBtn.disabled = false;
+      }
+    });
 
-              // Function to close modal and mark as shown
-              function closeWelcomeModal() {
-                welcomeModal.classList.remove('active');
-                document.body.style.overflow = ''; // Restore scrolling
-                // Mark that user has seen the welcome modal
-                localStorage.setItem(WELCOME_MODAL_KEY, 'true');
-              }
+    // 9. Keep preview image after page reload (if result exists)
+    {% if result and result.input_image %}
+    window.addEventListener('DOMContentLoaded', function () {
+      // If we have a result, show the uploaded image in preview
+      const uploadedImage = "{{ '/' + result.input_image }}";
+      previewImg.src = uploadedImage;
+      previewImg.style.display = 'block';
+      previewPlaceholder.style.display = 'none';
+      fileNameDisplay.textContent = 'Analyzed image';
+      fileNameDisplay.style.display = 'inline';
+      clearFile.style.display = 'inline';
+    });
+    {% endif %}
 
-              // Show modal when page loads (only for new users)
-              window.addEventListener('DOMContentLoaded', function() {
-                // Check for dev mode in URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const isDevMode = urlParams.get('dev')?.toLowerCase() === 'true';
+    // 10. Image zoom functionality for gradcam and overlay images
+    const zoomBackdrop = document.getElementById('zoomBackdrop');
 
-                // Check if user has seen the modal before
-                const hasSeenWelcome = localStorage.getItem(WELCOME_MODAL_KEY);
+    // Add click listeners to all viz-box elements
+    document.addEventListener('click', function (e) {
+      const vizBox = e.target.closest('.viz-box');
 
-                if (isDevMode || !hasSeenWelcome) {
-                  // New user or dev mode - show the modal
-                  setTimeout(function() {
-                    welcomeModal.classList.add('active');
-                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
-                  }, 300);
-                }
-              });
+      if (vizBox) {
+        // Check if clicking on a viz-box with an image
+        const img = vizBox.querySelector('img');
+        if (img && img.src) {
+          // Toggle zoom
+          if (vizBox.classList.contains('zoomed')) {
+            // Zoom out
+            vizBox.classList.remove('zoomed');
+            zoomBackdrop.classList.remove('active');
+            document.body.style.overflow = '';
+          } else {
+            // Close any other zoomed images first
+            document.querySelectorAll('.viz-box.zoomed').forEach(box => {
+              box.classList.remove('zoomed');
+            });
+            // Zoom in
+            vizBox.classList.add('zoomed');
+            zoomBackdrop.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          }
+        }
+      } else if (e.target === zoomBackdrop) {
+        // Click on backdrop closes zoom
+        document.querySelectorAll('.viz-box.zoomed').forEach(box => {
+          box.classList.remove('zoomed');
+        });
+        zoomBackdrop.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
 
-              // Close modal when clicking the close button
-              closeModalBtn.addEventListener('click', function() {
-                closeWelcomeModal();
-              });
+    // --- Welcome Modal Functionality ---
+    const welcomeModal = document.getElementById('welcomeModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const WELCOME_MODAL_KEY = 'woundai_welcome_shown';
 
-              // Close modal when clicking outside the modal content
-              welcomeModal.addEventListener('click', function(e) {
-                if (e.target === welcomeModal) {
-                  closeWelcomeModal();
-                }
-              });
+    // Function to close modal and mark as shown
+    function closeWelcomeModal() {
+      welcomeModal.classList.remove('active');
+      document.body.style.overflow = ''; // Restore scrolling
+      // Mark that user has seen the welcome modal
+      localStorage.setItem(WELCOME_MODAL_KEY, 'true');
+    }
 
-              // ESC key to close both zoom and modal
-              document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                  // Close welcome modal if active
-                  if (welcomeModal.classList.contains('active')) {
-                    closeWelcomeModal();
-                  }
-                  // Close zoomed images
-                  document.querySelectorAll('.viz-box.zoomed').forEach(box => {
-                    box.classList.remove('zoomed');
-                  });
-                  zoomBackdrop.classList.remove('active');
-                  document.body.style.overflow = '';
-                }
-              });
+    // Show modal when page loads (only for new users)
+    window.addEventListener('DOMContentLoaded', function () {
+      // Check for dev mode in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const isDevMode = urlParams.get('dev')?.toLowerCase() === 'true';
 
-              // --- Hamburger Menu Functionality ---
-              const hamburgerBtn = document.getElementById('hamburgerBtn');
-              const mobileMenu = document.getElementById('mobileMenu');
+      // Check if user has seen the modal before
+      const hasSeenWelcome = localStorage.getItem(WELCOME_MODAL_KEY);
 
-              hamburgerBtn.addEventListener('click', function() {
-                hamburgerBtn.classList.toggle('active');
-                mobileMenu.classList.toggle('active');
-              });
+      if (isDevMode || !hasSeenWelcome) {
+        // New user or dev mode - show the modal
+        setTimeout(function () {
+          welcomeModal.classList.add('active');
+          document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }, 300);
+      }
+    });
 
-              // Close mobile menu when clicking outside
-              document.addEventListener('click', function(e) {
-                if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
-                  hamburgerBtn.classList.remove('active');
-                  mobileMenu.classList.remove('active');
-                }
-              });
+    // Close modal when clicking the close button
+    closeModalBtn.addEventListener('click', function () {
+      closeWelcomeModal();
+    });
 
-              // Close mobile menu when clicking a link
-              document.querySelectorAll('.mobile-nav-link').forEach(link => {
-                link.addEventListener('click', function() {
-                  hamburgerBtn.classList.remove('active');
-                  mobileMenu.classList.remove('active');
-                });
-              });
-        </script>
-    </body>
+    // Close modal when clicking outside the modal content
+    welcomeModal.addEventListener('click', function (e) {
+      if (e.target === welcomeModal) {
+        closeWelcomeModal();
+      }
+    });
+
+    // ESC key to close both zoom and modal
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        // Close welcome modal if active
+        if (welcomeModal.classList.contains('active')) {
+          closeWelcomeModal();
+        }
+        // Close zoomed images
+        document.querySelectorAll('.viz-box.zoomed').forEach(box => {
+          box.classList.remove('zoomed');
+        });
+        zoomBackdrop.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+
+    // --- Hamburger Menu Functionality ---
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    hamburgerBtn.addEventListener('click', function () {
+      hamburgerBtn.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function (e) {
+      if (!hamburgerBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+        hamburgerBtn.classList.remove('active');
+        mobileMenu.classList.remove('active');
+      }
+    });
+
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', function () {
+        hamburgerBtn.classList.remove('active');
+        mobileMenu.classList.remove('active');
+      });
+    });
+  </script>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© Fakultas Ilmu Komputer Universitas Klabat, 2025</p>
+  </footer>
+</body>
+
 </html>
