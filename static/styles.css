@@ -2409,11 +2409,13 @@ pre {
 .contact-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr auto;
+    /* Push footer to bottom */
     gap: 25px;
     height: calc(100vh - 82px);
     /* Full viewport - navbar */
-    padding: 40px 25px 50px 25px;
-    /* Top/bottom padding for centering + 50px gap */
+    padding: 40px 25px 20px 25px;
+    /* Reduced bottom padding to 20px */
     overflow: hidden;
     box-sizing: border-box;
 }
