@@ -14,9 +14,28 @@
 
     <!-- Toast Notification Styles -->
     <style>
-        /* Fix for team photos to align top so hair isn't cut off */
-        .team-photo img {
-            object-position: top;
+        /* Fix for advisor photos - show full image without cropping */
+        .advisor-card .team-photo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: var(--color-bg-tertiary);
+            height: 350px;
+        }
+        
+        .advisor-card .team-photo img {
+            object-fit: contain;
+            object-position: center center;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Responsive adjustments for advisors */
+        @media (max-width: 900px) {
+            .advisor-card .team-photo {
+                height: 400px;
+            }
         }
 
         .toast {
@@ -207,9 +226,9 @@
                 </h3>
                 <div class="team-grid">
                     <!-- Advisor Card 1 -->
-                    <div class="team-card">
+                    <div class="team-card advisor-card">
                         <div class="team-photo">
-                            <img src="/static/George-Tangka-766x1024.jpg" alt="Advisor 1" />
+                            <img src="/static/George-Tangka-766x1024.jpg" alt="Advisor 1" class="advisor-img" />
                         </div>
                         <div class="team-info">
                             <p>
@@ -223,9 +242,9 @@
                     </div>
 
                     <!-- Advisor Card 2 -->
-                    <div class="team-card">
+                    <div class="team-card advisor-card">
                         <div class="team-photo">
-                            <img src="/static/Green-Arther-Sandag-S.Kom-MS.jpg" alt="Advisor 2" />
+                            <img src="/static/Green-Arther-Sandag-S.Kom-MS.jpg" alt="Advisor 2" class="advisor-img" />
                         </div>
                         <div class="team-info">
                             <p>
